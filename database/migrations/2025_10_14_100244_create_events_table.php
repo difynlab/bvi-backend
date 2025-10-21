@@ -22,8 +22,9 @@ return new class extends Migration
             $table->enum('repeat', ['na', 'daily', 'weekly', 'monthly', 'annually', 'custom']);
             $table->text('content');
             $table->string('location');
+            $table->string('register_link');
             $table->string('thumbnail');
-            $table->boolean('status')->default(2);
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }

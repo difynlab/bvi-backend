@@ -9,6 +9,16 @@ use Illuminate\Support\Facades\Validator;
 
 class EventController extends Controller
 {
+    private function processData($item)
+    {
+        $item->start_time = Carbon::parse($item->start_time)->format('H:i');
+        $item->end_time = Carbon::parse($item->end_time)->format('H:i');
+        $item->original_thumbnail = url('') . '/storage/events/' . $item->thumbnail;
+        $item->blurred_thumbnail = url('') . '/storage/events/thumbnails/' . $item->thumbnail;
+
+        return $item;
+    }
+
     public function index(Request $request)
     {
         $pagination = $request->pagination ?? 6;
@@ -16,20 +26,26 @@ class EventController extends Controller
 
         $items = Event::orderBy('id', 'desc')->paginate($pagination);
 
+        if($items->isEmpty()) {
+            return errorResponse('No data found', 404);
+        }
+
         $items->map(function($item) {
-            $item->original_image = url('') . '/storage/events/' . $item->thumbnail;
-            $item->blurred_image = url('') . '/storage/events/thumbnails/' . $item->thumbnail;
+            $this->processData($item);
         });
 
         return successResponse('success', 200, $items);
     }
 
-    public function show(Event $event)
+    public function show($id)
     {
-        // $event->start_time = Carbon::parse($event->start_time)->format('H:i');
-        // $event->end_time = Carbon::parse($event->end_time)->format('H:i');
-        $event->original_image = url('') . '/storage/events/' . $event->thumbnail;
-        $event->blurred_image = url('') . '/storage/events/thumbnails/' . $event->thumbnail;
+        $event = Event::find($id);
+
+        if(!$event) {
+            return errorResponse('No data found', 404);
+        }
+
+        $this->processData($event);
 
         return successResponse('success', 200, $event);
     }
@@ -45,47 +61,39 @@ class EventController extends Controller
             'repeat' => 'required|in:na,daily,weekly,monthly,annually',
             'content' => 'required|min:3',
             'location' => 'required|min:3',
-            'new_thumbnail' => 'required|max:5120',
-            'status' => 'required|in:0,1,2',
+            'register_link' => 'required|min:3',
+            'thumbnail' => 'required|max:5120',
+            'status' => 'required|in:0,1',
         ], [
-            'new_thumbnail.max' => 'The thumbnail must not be greater than 5120 kilobytes.',
+            'thumbnail.max' => 'The thumbnail must not be greater than 5120 kilobytes.',
             'start_time.regex' => 'The time must be in the format HH:MM.',
             'end_time.regex' => 'The end time must be in the format HH:MM.',
             'date.after_or_equal' => 'The date must be today or later.',
         ]);
 
         if($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput()->with([
-                'error' => 'Creation Failed!',
-                'message' => 'Your information has not been updated.'
-            ]);
+            return errorResponse('Validation failed', 400, $validator->errors());
         }
 
-        $processed_thumbnail = process_image($request->file('new_thumbnail'), 'events');
+        $processed_thumbnail = process_image($request->file('thumbnail'), 'events');
 
-        $data = $request->except(
-            'old_thumbnail',
-            'new_thumbnail',
-        );
+        $data = $request->all();
         $data['thumbnail'] = $processed_thumbnail;
-        $event = Event::create($data); 
+        $event = Event::create($data);
 
-        return redirect()->route('admin.events.index')->with([
-            'success' => "Create Successful!",
-            'message' => 'All changes have been successfully updated and saved.'
-        ]);
+        $this->processData($event);
+
+        return successResponse('Create successful', 200, $event);
     }
 
-    public function edit(Event $event)
+    public function update(Request $request, $id)
     {
-        $event->start_time = Carbon::parse($event->start_time)->format('H:i');
-        $event->end_time = Carbon::parse($event->end_time)->format('H:i');
+        $event = Event::find($id);
 
-        return response()->json($event);
-    }
+        if(!$event) {
+            return errorResponse('No data found', 404);
+        }
 
-    public function update(Request $request, Event $event)
-    {
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:3',
             'category' => 'required|in:workshop,webinar,conference',
@@ -95,49 +103,46 @@ class EventController extends Controller
             'repeat' => 'required|in:na,daily,weekly,monthly,annually',
             'content' => 'required|min:3',
             'location' => 'required|min:3',
-            'new_thumbnail' => 'nullable|max:5120',
-            'status' => 'required|in:0,1,2',
+            'register_link' => 'required|min:3',
+            'thumbnail' => 'nullable|max:5120',
+            'status' => 'required|in:0,1',
         ], [
-            'new_thumbnail.max' => 'The thumbnail must not be greater than 5120 kilobytes.',
+            'thumbnail.max' => 'The thumbnail must not be greater than 5120 kilobytes.',
             'start_time.regex' => 'The time must be in the format HH:MM.',
             'end_time.regex' => 'The end time must be in the format HH:MM.',
             'date.after_or_equal' => 'The date must be today or later.',
         ]);
 
         if($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput()->with([
-                'error' => 'Update Failed!',
-                'message' => 'Your information has not been updated.'
-            ]);
+            return errorResponse('Validation failed', 400, $validator->errors());
         }
 
-        if($request->file('new_thumbnail')) {
-            $processed_thumbnail = process_image($request->file('new_thumbnail'), 'events', $request->old_thumbnail);
+        if($request->file('thumbnail')) {
+            $processed_thumbnail = process_image($request->file('thumbnail'), 'events', $event->thumbnail);
         }
         else {
-            $processed_thumbnail = $request->old_thumbnail;
+            $processed_thumbnail = $event->thumbnail;
         }
 
-        $data = $request->except(
-            'old_thumbnail',
-            'new_thumbnail',
-        );
+        $data = $request->all();
         $data['thumbnail'] = $processed_thumbnail;
         $event->fill($data)->save();
-        
-        return redirect()->back()->with([
-            'success' => "Update Successful!",
-            'message' => 'All changes have been successfully updated and saved.'
-        ]);
+
+        $this->processData($event);
+
+        return successResponse('Update successful', 200, $event);
     }
 
-    public function destroy(Event $event)
+    public function destroy($id)
     {
+        $event = Event::find($id);
+
+        if(!$event) {
+            return errorResponse('No data found', 404);
+        }
+
         $event->delete();
 
-        return redirect()->back()->with([
-            'success' => 'Successfully deleted',
-            'message' => 'This information is removed from the system.'
-        ]);
+        return successResponse('Delete successful', 200);
     }
 }

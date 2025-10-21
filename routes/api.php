@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\NoticeCategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('login', function () {
@@ -29,7 +30,7 @@ Route::middleware('auth:api')->group(function () {
         // Events (read-only)
             Route::controller(EventController::class)->prefix('events')->group(function() {
                 Route::get('/', 'index');
-                Route::get('{event}/show', 'show');
+                Route::get('{id}', 'show');
             });
         // Events (read-only)
     };
@@ -41,11 +42,20 @@ Route::middleware('auth:api')->group(function () {
         // Events routes
             Route::controller(EventController::class)->prefix('events')->group(function() {
                 Route::post('/', 'store');
-                Route::get('{event}/edit', 'edit');
-                Route::post('{event}', 'update');
-                Route::delete('{event}', 'destroy');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
             });
         // Events routes
+
+        // Notice category routes
+            Route::controller(NoticeCategoryController::class)->prefix('notice-categories')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Notice category routes
     };
 // Admin routes
 

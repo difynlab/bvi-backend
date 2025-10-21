@@ -22,7 +22,7 @@ return new class extends Migration
             $table->enum('role', ['admin', 'member']);
             $table->string('image')->nullable();
             $table->boolean('is_new')->default(1);
-            $table->boolean('status')->default(2);
+            $table->boolean('status')->default(1);
             $table->rememberToken();
             $table->timestamps();
         });
