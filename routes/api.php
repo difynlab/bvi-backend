@@ -6,7 +6,11 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\NoticeCategoryController;
+use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\ReportCategoryController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('login', function () {
@@ -56,6 +60,46 @@ Route::middleware('auth:api')->group(function () {
                 Route::delete('{id}', 'destroy');
             });
         // Notice category routes
+
+        // Notice routes
+            Route::controller(NoticeController::class)->prefix('notices')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Notice routes
+
+        // Newsletter routes
+            Route::controller(NewsletterController::class)->prefix('newsletters')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Newsletter routes
+
+        // Report category routes
+            Route::controller(ReportCategoryController::class)->prefix('report-categories')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Report category routes
+
+        // Report routes
+            Route::controller(ReportController::class)->prefix('reports')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Report routes
     };
 // Admin routes
 
