@@ -20,7 +20,7 @@ class AuthenticationController extends Controller
         }
 
         $credentials = $request->only('email', 'password');
-        $credentials['status'] = 2;
+        $credentials['status'] = 1;
 
         if(!Auth::attempt($credentials)) {
             return errorResponse('These credentials do not match our records.', 401);
