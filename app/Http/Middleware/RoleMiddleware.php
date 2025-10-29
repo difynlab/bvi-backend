@@ -21,7 +21,7 @@ class RoleMiddleware
             }
 
             return errorResponse('Unauthorized access', 401, [
-                'info' => 'This request is for a different user'
+                'info' => 'Invalid request from a different user'
             ]);
         }
 

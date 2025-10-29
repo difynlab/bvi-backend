@@ -6,9 +6,11 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\LegislationController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\NoticeCategoryController;
 use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportCategoryController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
@@ -31,12 +33,60 @@ Route::middleware('auth:api')->group(function () {
     $sharedRoutes = function () {
         Route::get('dashboard', [DashboardController::class, 'index']);
 
-        // Events (read-only)
+        // Events routes
             Route::controller(EventController::class)->prefix('events')->group(function() {
                 Route::get('/', 'index');
                 Route::get('{id}', 'show');
             });
-        // Events (read-only)
+        // Events routes
+
+        // Notice category routes
+            Route::controller(NoticeCategoryController::class)->prefix('notice-categories')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Notice category routes
+
+        // Notice routes
+            Route::controller(NoticeController::class)->prefix('notices')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Notice routes
+
+        // Newsletter routes
+            Route::controller(NewsletterController::class)->prefix('newsletters')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Newsletter routes
+
+        // Report category routes
+            Route::controller(ReportCategoryController::class)->prefix('report-categories')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Report category routes
+
+        // Report routes
+            Route::controller(ReportController::class)->prefix('reports')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Report routes
+
+        // Legislation routes
+            Route::controller(LegislationController::class)->prefix('legislation')->group(function() {
+                Route::get('/', 'index');
+            });
+        // Legislation routes
+
+        // Profile routes
+            Route::controller(ProfileController::class)->prefix('profile')->group(function() {
+                Route::get('/', 'index');
+                Route::post('/', 'update');
+            });
+        // Profile routes
     };
 // Shared routes
 
@@ -53,8 +103,6 @@ Route::middleware('auth:api')->group(function () {
 
         // Notice category routes
             Route::controller(NoticeCategoryController::class)->prefix('notice-categories')->group(function() {
-                Route::get('/', 'index');
-                Route::get('{id}', 'show');
                 Route::post('/', 'store');
                 Route::post('{id}', 'update');
                 Route::delete('{id}', 'destroy');
@@ -63,8 +111,6 @@ Route::middleware('auth:api')->group(function () {
 
         // Notice routes
             Route::controller(NoticeController::class)->prefix('notices')->group(function() {
-                Route::get('/', 'index');
-                Route::get('{id}', 'show');
                 Route::post('/', 'store');
                 Route::post('{id}', 'update');
                 Route::delete('{id}', 'destroy');
@@ -73,8 +119,6 @@ Route::middleware('auth:api')->group(function () {
 
         // Newsletter routes
             Route::controller(NewsletterController::class)->prefix('newsletters')->group(function() {
-                Route::get('/', 'index');
-                Route::get('{id}', 'show');
                 Route::post('/', 'store');
                 Route::post('{id}', 'update');
                 Route::delete('{id}', 'destroy');
@@ -83,8 +127,6 @@ Route::middleware('auth:api')->group(function () {
 
         // Report category routes
             Route::controller(ReportCategoryController::class)->prefix('report-categories')->group(function() {
-                Route::get('/', 'index');
-                Route::get('{id}', 'show');
                 Route::post('/', 'store');
                 Route::post('{id}', 'update');
                 Route::delete('{id}', 'destroy');
@@ -93,26 +135,29 @@ Route::middleware('auth:api')->group(function () {
 
         // Report routes
             Route::controller(ReportController::class)->prefix('reports')->group(function() {
-                Route::get('/', 'index');
-                Route::get('{id}', 'show');
                 Route::post('/', 'store');
                 Route::post('{id}', 'update');
                 Route::delete('{id}', 'destroy');
             });
         // Report routes
+
+        // Legislation routes
+            Route::controller(LegislationController::class)->prefix('legislation')->group(function() {
+                Route::post('/', 'update');
+            });
+        // Legislation routes
     };
 // Admin routes
 
 
-// Member routes → only shared
-    Route::middleware(['auth:api', 'role:member'])->group($sharedRoutes);
-// Member routes → only shared
+// Admin & member routes
+    Route::middleware('auth:api')->group($sharedRoutes);
+// Admin & member routes
 
 
-// Admin routes → shared + admin
+// Admin only routes
     Route::middleware(['auth:api', 'role:admin'])
-        ->group(function () use ($sharedRoutes, $adminRoutes) {
-            $sharedRoutes();
+        ->group(function () use ($adminRoutes) {
             $adminRoutes();
         });
-// Admin routes → shared + admin
+// Admin only routes
