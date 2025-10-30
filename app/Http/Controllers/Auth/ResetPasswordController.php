@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Passport\Token;
 
 class ResetPasswordController extends Controller
 {
@@ -36,6 +37,11 @@ class ResetPasswordController extends Controller
 
         $user->password = Hash::make($request->password);
         $user->save();
+
+        $user->tokens()->each(function (Token $token) {
+            $token->revoke();
+            $token->refreshToken?->revoke();
+        });
 
         return successResponse('Password successfully changed', 200, [
             'email' => $request->email

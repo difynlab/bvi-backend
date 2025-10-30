@@ -6,35 +6,36 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Passport\Token;
 
 class ProfileController extends Controller
 {
-    private function processData($item)
+    private function processData($user)
     {
-        $item->original_image = url('') . '/storage/users/' . $item->image;
-        $item->blurred_image = url('') . '/storage/users/thumbnails/' . $item->image;
+        $user->original_image = url('') . '/storage/users/' . $user->image;
+        $user->blurred_image = url('') . '/storage/users/thumbnails/' . $user->image;
 
-        return $item;
+        return $user;
     }
 
     public function index()
     {
-        $item = Auth::user();
+        $user = Auth::user();
 
-        $this->processData($item);
+        $this->processData($user);
 
-        return successResponse('success', 200, $item);
+        return successResponse('success', 200, $user);
     }
 
     public function update(Request $request)
     {
-        $item = Auth::user();
+        $user = Auth::user();
 
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|min:3|max:255',
             'last_name' => 'required|min:3|max:255',
-            'email' => 'required|email|min:3|max:255|unique:users,email,'.$item->id,
-            'phone' => 'required|numeric|unique:users,phone,'.$item->id,
+            'email' => 'required|email|min:3|max:255|unique:users,email,'.$user->id,
+            'phone' => 'required|numeric|unique:users,phone,'.$user->id,
             'image' => 'max:5120',
         ], [
             'image.max' => 'The image must not be greater than 5120 kilobytes.'
@@ -46,16 +47,15 @@ class ProfileController extends Controller
 
         // Image
             if($request->file('image')) {
-                $processed_image = process_image($request->file('image'), 'users', $item->image);
+                $processed_image = process_image($request->file('image'), 'users', $user->image);
             }
             else {
-                $processed_image = $item->image;
+                $processed_image = $user->image;
             }
         // Image
 
         $data = $request->except(
-            'old_image',
-            'new_image',
+            'image',
             'password',
             'new_password',
             'confirm_password'
@@ -74,21 +74,23 @@ class ProfileController extends Controller
                 return errorResponse('Validation failed', 400, $validator->errors());
             }
 
-            if(!Hash::check($request->password, $item->password)) {
+            if(!Hash::check($request->password, $user->password)) {
                 return errorResponse('Incorrect password', 400);
             }
 
             $data['password'] = Hash::make($request->new_password);
+
+            $user->tokens()->each(function (Token $token) {
+                $token->revoke();
+                $token->refreshToken?->revoke();
+            });
         }
 
         $data['image'] = $processed_image;
-        $item->fill($data)->save();
+        $user->fill($data)->save();
 
-        $this->processData($item);
+        $this->processData($user);
 
-        // Auth::logoutOtherDevices($request->password);
-        // Auth::logout();
-
-        return successResponse('Update successful', 200, $item);
+        return successResponse('Update successful', 200, $user);
     }
 }

@@ -24,7 +24,9 @@ class EventController extends Controller
         $pagination = $request->pagination ?? 6;
         $page = $request->page ?? 1;
 
-        $items = Event::orderBy('id', 'desc')->paginate($pagination);
+        $items = Event::orderBy('id', 'desc');
+        $items = auth()->user()->role == 'admin' ? $items : $items->where('status', 1);
+        $items = $items->paginate($pagination);
 
         if($items->isEmpty()) {
             return errorResponse('No data found', 404);
@@ -39,7 +41,9 @@ class EventController extends Controller
 
     public function show($id)
     {
-        $event = Event::find($id);
+        $event = Event::where('id', $id);
+        $event = auth()->user()->role == 'admin' ? $event : $event->where('status', 1);
+        $event = $event->first();
 
         if(!$event) {
             return errorResponse('No data found', 404);

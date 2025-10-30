@@ -26,7 +26,9 @@ class NoticeController extends Controller
         $pagination = $request->pagination ?? 6;
         $page = $request->page ?? 1;
 
-        $items = Notice::orderBy('id', 'desc')->paginate($pagination);
+        $items = Notice::orderBy('id', 'desc');
+        $items = auth()->user()->role == 'admin' ? $items : $items->where('status', 1);
+        $items = $items->paginate($pagination);
 
         if($items->isEmpty()) {
             return errorResponse('No data found', 404);
@@ -41,7 +43,9 @@ class NoticeController extends Controller
 
     public function show($id)
     {
-        $notice = Notice::find($id);
+        $notice = Notice::where('id', $id);
+        $notice = auth()->user()->role == 'admin' ? $notice : $notice->where('status', 1);
+        $notice = $notice->first();
 
         if(!$notice) {
             return errorResponse('No data found', 404);

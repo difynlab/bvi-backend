@@ -24,7 +24,9 @@ class ReportController extends Controller
         $pagination = $request->pagination ?? 6;
         $page = $request->page ?? 1;
 
-        $items = Report::orderBy('id', 'desc')->paginate($pagination);
+        $items = Report::orderBy('id', 'desc');
+        $items = auth()->user()->role == 'admin' ? $items : $items->where('status', 1);
+        $items = $items->paginate($pagination);
 
         if($items->isEmpty()) {
             return errorResponse('No data found', 404);
@@ -39,7 +41,9 @@ class ReportController extends Controller
 
     public function show($id)
     {
-        $report = Report::find($id);
+        $report = Report::where('id', $id);
+        $report = auth()->user()->role == 'admin' ? $report : $report->where('status', 1);
+        $report = $report->first();
 
         if(!$report) {
             return errorResponse('No data found', 404);

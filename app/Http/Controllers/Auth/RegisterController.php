@@ -20,7 +20,7 @@ class RegisterController extends Controller
             'phone' => 'required|min:8|max:15|regex:/^\+?[0-9]+$/|unique:users,phone',
             'password' => 'required|min:8',
             'password_confirmation' => 'required|same:password',
-            'role' => 'required|in:admin,member'
+            'role' => 'required|in:member'
         ]);
 
         if($validator->fails()) {

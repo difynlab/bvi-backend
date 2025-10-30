@@ -4,9 +4,9 @@ use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\LegislationController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\NoticeCategoryController;
 use App\Http\Controllers\NoticeController;
@@ -16,7 +16,7 @@ use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('login', function () {
-    return errorResponse('Authentication required. Please provide a valid access token.', 401);
+    return errorResponse('Authentication required', 401);
 })->name('login');
 
 Route::post('login', [AuthenticationController::class, 'login']);
@@ -31,8 +31,6 @@ Route::middleware('auth:api')->group(function () {
 
 // Shared routes
     $sharedRoutes = function () {
-        Route::get('dashboard', [DashboardController::class, 'index']);
-
         // Events routes
             Route::controller(EventController::class)->prefix('events')->group(function() {
                 Route::get('/', 'index');
@@ -146,6 +144,16 @@ Route::middleware('auth:api')->group(function () {
                 Route::post('/', 'update');
             });
         // Legislation routes
+
+        // Member routes
+            Route::controller(MemberController::class)->prefix('members')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Member routes
     };
 // Admin routes
 

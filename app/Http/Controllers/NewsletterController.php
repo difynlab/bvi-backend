@@ -24,7 +24,9 @@ class NewsletterController extends Controller
         $pagination = $request->pagination ?? 6;
         $page = $request->page ?? 1;
 
-        $items = Newsletter::orderBy('id', 'desc')->paginate($pagination);
+        $items = Newsletter::orderBy('id', 'desc');
+        $items = auth()->user()->role == 'admin' ? $items : $items->where('status', 1);
+        $items = $items->paginate($pagination);
 
         if($items->isEmpty()) {
             return errorResponse('No data found', 404);
@@ -39,7 +41,9 @@ class NewsletterController extends Controller
 
     public function show($id)
     {
-        $newsletter = Newsletter::find($id);
+        $newsletter = Newsletter::where('id', $id);
+        $newsletter = auth()->user()->role == 'admin' ? $newsletter : $newsletter->where('status', 1);
+        $newsletter = $newsletter->first();
 
         if(!$newsletter) {
             return errorResponse('No data found', 404);

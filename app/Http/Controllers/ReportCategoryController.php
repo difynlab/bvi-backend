@@ -13,7 +13,9 @@ class ReportCategoryController extends Controller
         $pagination = $request->pagination ?? 6;
         $page = $request->page ?? 1;
 
-        $items = ReportCategory::orderBy('id', 'desc')->paginate($pagination);
+        $items = ReportCategory::orderBy('id', 'desc');
+        $items = auth()->user()->role == 'admin' ? $items : $items->where('status', 1);
+        $items = $items->paginate($pagination);
 
         if($items->isEmpty()) {
             return errorResponse('No data found', 404);
@@ -24,7 +26,9 @@ class ReportCategoryController extends Controller
 
     public function show($id)
     {
-        $report_category = ReportCategory::find($id);
+        $report_category = ReportCategory::where('id', $id);
+        $report_category = auth()->user()->role == 'admin' ? $report_category : $report_category->where('status', 1);
+        $report_category = $report_category->first();
 
         if(!$report_category) {
             return errorResponse('No data found', 404);
