@@ -14,7 +14,10 @@ class ReportController extends Controller
     private function processData($item)
     {
         $item->report_category = ReportCategory::find($item->report_category_id);
-        $item->file = url('') . '/storage/reports/' . $item->file;
+
+        if($item->file) {
+            $item->file = url('') . '/storage/reports/' . $item->file;
+        }
 
         return $item;
     }

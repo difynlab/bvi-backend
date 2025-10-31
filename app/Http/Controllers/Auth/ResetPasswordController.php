@@ -12,7 +12,8 @@ use Laravel\Passport\Token;
 
 class ResetPasswordController extends Controller
 {
-    public function resetPassword(Request $request) {
+    public function resetPassword(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|min:8',

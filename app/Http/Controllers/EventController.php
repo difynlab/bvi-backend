@@ -13,8 +13,11 @@ class EventController extends Controller
     {
         $item->start_time = Carbon::parse($item->start_time)->format('H:i');
         $item->end_time = Carbon::parse($item->end_time)->format('H:i');
-        $item->original_thumbnail = url('') . '/storage/events/' . $item->thumbnail;
-        $item->blurred_thumbnail = url('') . '/storage/events/thumbnails/' . $item->thumbnail;
+
+        if($item->thumbnail) {
+            $item->original_thumbnail = url('') . '/storage/events/' . $item->thumbnail;
+            $item->blurred_thumbnail = url('') . '/storage/events/thumbnails/' . $item->thumbnail;
+        }
 
         return $item;
     }

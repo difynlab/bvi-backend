@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AuthenticationController extends Controller
 {
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required'
@@ -27,6 +29,12 @@ class AuthenticationController extends Controller
         }
 
         $user = Auth::user();
+        if($user->image) {
+            $user->original_image = url('') . '/storage/users/' . $user->image;
+            $user->blurred_image = url('') . '/storage/users/thumbnails/' . $user->image;
+        }
+        $user->payments = Payment::where('user_id', $user->id)->orderBy('id', 'desc')->get();
+
         $token = $user->createToken('BVI')->accessToken;
 
         return successResponse('Login successful', 200, [
@@ -36,7 +44,8 @@ class AuthenticationController extends Controller
         ]);
     }
 
-    public function logout() {
+    public function logout()
+    {
         $user = Auth::user();
         $access_token = $user->token();
 

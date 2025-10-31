@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Passport\Token;
 
-class MemberController extends Controller
+class PaymentController extends Controller
 {
     private function processData($item)
     {
@@ -17,8 +16,6 @@ class MemberController extends Controller
             $item->original_image = url('') . '/storage/users/' . $item->image;
             $item->blurred_image = url('') . '/storage/users/thumbnails/' . $item->image;
         }
-
-        $item->payments = Payment::where('user_id', $item->id)->orderBy('id', 'desc')->get();
 
         return $item;
     }
@@ -163,33 +160,5 @@ class MemberController extends Controller
         $member->delete();
 
         return successResponse('Delete successful', 200);
-    }
-
-    public function renew(Request $request, $id)
-    {
-        $member = User::find($id);
-
-        if(!$member) {
-            return errorResponse('No data found', 404);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'membership_type' => 'required|in:gold,silver,standard',
-            'date' => 'required|date',
-            'amount' => 'required|numeric',
-            'status' => 'required|in:0,1,2'
-        ]);
-
-        if($validator->fails()) {
-            return errorResponse('Validation failed', 400, $validator->errors());
-        }
-
-        $data = $request->all();
-        $data['user_id'] = $member->id;
-        Payment::create($data);
-
-        $this->processData($member);
-
-        return successResponse('Create successful', 200, $member);
     }
 }

@@ -12,9 +12,14 @@ class NewsletterController extends Controller
 {
     private function processData($item)
     {
-        $item->original_thumbnail = url('') . '/storage/newsletters/' . $item->thumbnail;
-        $item->blurred_thumbnail = url('') . '/storage/newsletters/thumbnails/' . $item->thumbnail;
-        $item->file = url('') . '/storage/newsletters/' . $item->file;
+        if($item->thumbnail) {
+            $item->original_thumbnail = url('') . '/storage/newsletters/' . $item->thumbnail;
+            $item->blurred_thumbnail = url('') . '/storage/newsletters/thumbnails/' . $item->thumbnail;
+        }
+
+        if($item->file) {
+            $item->file = url('') . '/storage/newsletters/' . $item->file;
+        }
 
         return $item;
     }

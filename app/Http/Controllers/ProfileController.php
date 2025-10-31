@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -12,8 +13,12 @@ class ProfileController extends Controller
 {
     private function processData($user)
     {
-        $user->original_image = url('') . '/storage/users/' . $user->image;
-        $user->blurred_image = url('') . '/storage/users/thumbnails/' . $user->image;
+        if($user->image) {
+            $user->original_image = url('') . '/storage/users/' . $user->image;
+            $user->blurred_image = url('') . '/storage/users/thumbnails/' . $user->image;
+        }
+        
+        $user->payments = Payment::where('user_id', $user->id)->orderBy('id', 'desc')->get();
 
         return $user;
     }

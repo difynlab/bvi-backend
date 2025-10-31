@@ -14,9 +14,15 @@ class NoticeController extends Controller
     private function processData($item)
     {
         $item->notice_category = NoticeCategory::find($item->notice_category_id);
-        $item->original_thumbnail = url('') . '/storage/notices/' . $item->thumbnail;
-        $item->blurred_thumbnail = url('') . '/storage/notices/thumbnails/' . $item->thumbnail;
-        $item->file = url('') . '/storage/notices/' . $item->file;
+
+        if($item->thumbnail) {
+            $item->original_thumbnail = url('') . '/storage/notices/' . $item->thumbnail;
+            $item->blurred_thumbnail = url('') . '/storage/notices/thumbnails/' . $item->thumbnail;
+        }
+
+        if($item->file) {
+            $item->file = url('') . '/storage/notices/' . $item->file;
+        }
 
         return $item;
     }

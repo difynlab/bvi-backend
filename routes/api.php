@@ -152,6 +152,8 @@ Route::middleware('auth:api')->group(function () {
                 Route::post('/', 'store');
                 Route::post('{id}', 'update');
                 Route::delete('{id}', 'destroy');
+
+                Route::post('{id}/renew', 'renew');
             });
         // Member routes
     };

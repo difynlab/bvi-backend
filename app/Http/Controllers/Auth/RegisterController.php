@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Mail\AccountRegisterMail;
+use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,8 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-    public function register(Request $request) {     
+    public function register(Request $request)
+    {     
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|min:3|max:20',
             'last_name' => 'required|min:3|max:20',
@@ -40,6 +42,12 @@ class RegisterController extends Controller
         send_email(new AccountRegisterMail($mail, 'admin'), config('app.admin_email'));
 
         Auth::login($user);
+        if($user->image) {
+            $user->original_image = url('') . '/storage/users/' . $user->image;
+            $user->blurred_image = url('') . '/storage/users/thumbnails/' . $user->image;
+        }
+        $user->payments = Payment::where('user_id', $user->id)->orderBy('id', 'desc')->get();
+        
         $token = $user->createToken('BVI')->accessToken;
 
         return successResponse('Login successful', 200, [

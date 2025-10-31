@@ -11,7 +11,8 @@ use App\Mail\AccountForgotPasswordMail;
 
 class ForgotPasswordController extends Controller
 {
-    public function forgotPassword(Request $request) {
+    public function forgotPassword(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email'
         ]);
