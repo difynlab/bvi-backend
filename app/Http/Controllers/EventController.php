@@ -62,6 +62,7 @@ class EventController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:3',
             'category' => 'required|in:workshop,webinar,conference',
+            'short_description' => 'required|min:3',
             'date' => 'required|date|after_or_equal:today',
             'start_time' => ['required','regex:/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/'],
             'end_time' => ['required','regex:/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/'],
@@ -104,6 +105,7 @@ class EventController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:3',
             'category' => 'required|in:workshop,webinar,conference',
+            'short_description' => 'required|min:3',
             'date' => 'required|date|after_or_equal:today',
             'start_time' => ['required','regex:/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/'],
             'end_time' => ['required','regex:/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/'],
