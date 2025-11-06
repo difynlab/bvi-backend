@@ -34,7 +34,7 @@ class NewsletterController extends Controller
         $items = $items->paginate($pagination);
 
         if($items->isEmpty()) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $items->map(function($item) {
@@ -51,7 +51,7 @@ class NewsletterController extends Controller
         $newsletter = $newsletter->first();
 
         if(!$newsletter) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $this->processData($newsletter);
@@ -64,7 +64,6 @@ class NewsletterController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'description' => 'required|min:3',
-            'thumbnail' => 'required|max:5120',
             'file' => 'required|mimes:pdf|max:15360',
             'link' => 'required|min:3',
             'status' => 'required|in:0,1'
@@ -80,11 +79,7 @@ class NewsletterController extends Controller
         $file_name = Str::uuid()->toString().'.pdf';
         Storage::put("newsletters/$file_name", file_get_contents($file));
 
-
-        $processed_thumbnail = process_image($request->file('thumbnail'), 'newsletters');
-
         $data = $request->all();
-        $data['thumbnail'] = $processed_thumbnail;
         $data['file'] = $file_name;
         $newsletter = Newsletter::create($data);
 
@@ -98,13 +93,12 @@ class NewsletterController extends Controller
         $newsletter = Newsletter::find($id);
 
         if(!$newsletter) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'description' => 'required|min:3',
-            'thumbnail' => 'nullable|max:5120',
             'file' => 'nullable|mimes:pdf|max:15360',
             'link' => 'required|min:3',
             'status' => 'required|in:0,1'
@@ -127,15 +121,7 @@ class NewsletterController extends Controller
             $file_name = $newsletter->file;
         }
 
-        if($request->file('thumbnail')) {
-            $processed_thumbnail = process_image($request->file('thumbnail'), 'newsletters', $newsletter->thumbnail);
-        }
-        else {
-            $processed_thumbnail = $newsletter->thumbnail;
-        }
-
         $data = $request->all();
-        $data['thumbnail'] = $processed_thumbnail;
         $data['file'] = $file_name;
         $newsletter->fill($data)->save();
 
@@ -149,7 +135,7 @@ class NewsletterController extends Controller
         $newsletter = Newsletter::find($id);
 
         if(!$newsletter) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $newsletter->delete();

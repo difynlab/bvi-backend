@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\LegislationController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\MembershipPlanController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\NoticeCategoryController;
 use App\Http\Controllers\NoticeController;
@@ -85,6 +86,13 @@ Route::middleware('auth:api')->group(function () {
                 Route::post('/', 'update');
             });
         // Profile routes
+
+        // Membership plan routes
+            Route::controller(MembershipPlanController::class)->prefix('membership-plans')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Membership plan routes
     };
 // Shared routes
 
@@ -156,6 +164,14 @@ Route::middleware('auth:api')->group(function () {
                 Route::post('{id}/renew', 'renew');
             });
         // Member routes
+
+        // Membership plan routes
+            Route::controller(MembershipPlanController::class)->prefix('membership-plans')->group(function() {
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Membership plan routes
     };
 // Admin routes
 

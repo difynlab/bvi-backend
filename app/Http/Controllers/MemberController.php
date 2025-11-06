@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MembershipPlan;
 use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -18,7 +19,16 @@ class MemberController extends Controller
             $item->blurred_image = url('') . '/storage/users/thumbnails/' . $item->image;
         }
 
-        $item->payments = Payment::where('user_id', $item->id)->orderBy('id', 'desc')->get();
+        $payments = Payment::where('user_id', $item->id)->orderBy('id', 'desc')->get();
+
+        $item->payments = $payments->map(function($item) {
+            $membership_plan = MembershipPlan::find($item->membership_plan_id);
+            $membership_plan->perks = json_decode($membership_plan['perks']);
+
+            $item->membership_plan_id = $membership_plan;
+
+            return $item;
+        });
 
         return $item;
     }
@@ -31,7 +41,7 @@ class MemberController extends Controller
         $items = User::whereNot('id', auth()->user()->id)->orderBy('id', 'desc')->paginate($pagination);
 
         if($items->isEmpty()) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $items->map(function($item) {
@@ -46,7 +56,7 @@ class MemberController extends Controller
         $member = User::find($id);
 
         if(!$member) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $this->processData($member);
@@ -94,7 +104,7 @@ class MemberController extends Controller
         $member = User::find($id);
 
         if(!$member) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $validator = Validator::make($request->all(), [
@@ -157,7 +167,7 @@ class MemberController extends Controller
         $member = User::find($id);
 
         if(!$member) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $member->delete();
@@ -170,11 +180,11 @@ class MemberController extends Controller
         $member = User::find($id);
 
         if(!$member) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $validator = Validator::make($request->all(), [
-            'membership_type' => 'required|in:gold,silver,standard',
+            'membership_plan_id' => 'required|exists:membership_plans,id,status,1',
             'date' => 'required|date',
             'amount' => 'required|numeric',
             'status' => 'required|in:0,1,2'

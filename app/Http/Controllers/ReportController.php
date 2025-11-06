@@ -32,7 +32,7 @@ class ReportController extends Controller
         $items = $items->paginate($pagination);
 
         if($items->isEmpty()) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $items->map(function($item) {
@@ -49,7 +49,7 @@ class ReportController extends Controller
         $report = $report->first();
 
         if(!$report) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $this->processData($report);
@@ -93,7 +93,7 @@ class ReportController extends Controller
         $report = Report::find($id);
 
         if(!$report) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $validator = Validator::make($request->all(), [
@@ -137,7 +137,7 @@ class ReportController extends Controller
         $report = Report::find($id);
 
         if(!$report) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $report->delete();

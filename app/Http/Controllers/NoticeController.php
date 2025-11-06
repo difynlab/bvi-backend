@@ -37,7 +37,7 @@ class NoticeController extends Controller
         $items = $items->paginate($pagination);
 
         if($items->isEmpty()) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $items->map(function($item) {
@@ -54,7 +54,7 @@ class NoticeController extends Controller
         $notice = $notice->first();
 
         if(!$notice) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $this->processData($notice);
@@ -67,7 +67,6 @@ class NoticeController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'description' => 'required|min:3',
-            'thumbnail' => 'required|max:5120',
             'file' => 'required|mimes:pdf|max:15360',
             'link' => 'required|min:3',
             'notice_category_id' => 'required|exists:notice_categories,id,status,1',
@@ -85,11 +84,7 @@ class NoticeController extends Controller
         $file_name = Str::uuid()->toString().'.pdf';
         Storage::put("notices/$file_name", file_get_contents($file));
 
-
-        $processed_thumbnail = process_image($request->file('thumbnail'), 'notices');
-
         $data = $request->all();
-        $data['thumbnail'] = $processed_thumbnail;
         $data['file'] = $file_name;
         $notice = Notice::create($data);
 
@@ -103,13 +98,12 @@ class NoticeController extends Controller
         $notice = Notice::find($id);
 
         if(!$notice) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'description' => 'required|min:3',
-            'thumbnail' => 'nullable|max:5120',
             'file' => 'nullable|mimes:pdf|max:15360',
             'link' => 'required|min:3',
             'notice_category_id' => 'required|exists:notice_categories,id,status,1',
@@ -134,15 +128,7 @@ class NoticeController extends Controller
             $file_name = $notice->file;
         }
 
-        if($request->file('thumbnail')) {
-            $processed_thumbnail = process_image($request->file('thumbnail'), 'notices', $notice->thumbnail);
-        }
-        else {
-            $processed_thumbnail = $notice->thumbnail;
-        }
-
         $data = $request->all();
-        $data['thumbnail'] = $processed_thumbnail;
         $data['file'] = $file_name;
         $notice->fill($data)->save();
 
@@ -156,7 +142,7 @@ class NoticeController extends Controller
         $notice = Notice::find($id);
 
         if(!$notice) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $notice->delete();

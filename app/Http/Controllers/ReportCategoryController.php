@@ -18,7 +18,7 @@ class ReportCategoryController extends Controller
         $items = $items->paginate($pagination);
 
         if($items->isEmpty()) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         return successResponse('success', 200, $items);
@@ -31,7 +31,7 @@ class ReportCategoryController extends Controller
         $report_category = $report_category->first();
 
         if(!$report_category) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         return successResponse('success', 200, $report_category);
@@ -59,7 +59,7 @@ class ReportCategoryController extends Controller
         $report_category = ReportCategory::find($id);
 
         if(!$report_category) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $validator = Validator::make($request->all(), [
@@ -82,7 +82,7 @@ class ReportCategoryController extends Controller
         $report_category = ReportCategory::find($id);
 
         if(!$report_category) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $report_category->delete();

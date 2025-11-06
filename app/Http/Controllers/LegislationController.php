@@ -15,21 +15,26 @@ class LegislationController extends Controller
         $existing_files = json_decode($item->files ?? '[]', true);
         if($existing_files) {
             $existing_files = collect($existing_files)->map(function($existing_file) {
-                return url('') . '/storage/legislation/' . $existing_file;
+                return [
+                    'title' => $existing_file['title'] ?? null,
+                    'file'  => url("storage/legislation/{$existing_file['file']}"),
+                ];
             })->toArray();
 
             $item->files = $existing_files;
         }
+
+        $item->links = $item->links ? json_decode($item->links) : null;
 
         return $item;
     }
 
     public function index()
     {
-        $item = Legislation::select('description', 'files', 'link')->find(1);
+        $item = Legislation::select('description', 'files', 'links')->find(1);
 
         if(!$item) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $this->processData($item);
@@ -42,13 +47,11 @@ class LegislationController extends Controller
         $item = Legislation::find(1);
 
         if(!$item) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $validator = Validator::make($request->all(), [
-            'description' => 'required|min:3',
-            'files.*' => 'mimes:pdf|max:15360',
-            'link' => 'required|min:3'
+            'files.*' => 'mimes:pdf|max:15360'
         ], [
             'files.*.max' => 'The file must not be greater than 15360 kilobytes.'
         ]);
@@ -62,20 +65,26 @@ class LegislationController extends Controller
             $existing_files = json_decode($item->files ?? '[]', true);
             if($existing_files) {
                 foreach($existing_files as $existing_file) {
-                    Storage::delete("legislation/$existing_file");
+                    $file_name = $existing_file['file'];
+
+                    Storage::delete("legislation/$file_name");
                 }
             }
 
-            foreach($request->file('files') as $file) {
+            foreach($request->file('files') as $key => $file) {
                 $file_name = Str::uuid()->toString().'.pdf';
                 Storage::put("legislation/$file_name", file_get_contents($file));
 
-                $files[] = $file_name;
+                $files[] = [
+                    'title' => $request->titles[$key] ?? null,
+                    'file' => $file_name,
+                ];
             }
         }
 
-        $data = $request->all();
+        $data = $request->except('titles');
         $data['files'] = $request->file('files') ? json_encode($files) : $item->files;
+        $data['links'] = $request->links ? json_encode($request->links) : null;
         $item->fill($data)->save();
 
         $this->processData($item);

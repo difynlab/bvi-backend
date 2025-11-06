@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->enum('membership_type', ['gold', 'silver', 'standard']);
             $table->date('date');
             $table->decimal('amount', 10, 2);
             $table->boolean('status');
 
+            $table->foreignId('membership_plan_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
             $table->timestamps();

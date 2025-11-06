@@ -17,6 +17,18 @@ return new class extends Migration
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time');
+            $table->enum('timezone', [
+                'UTC-08:00',
+                'UTC-06:00',
+                'UTC-03:00',
+                'UTC±00:00',
+                'UTC+01:00',
+                'UTC+03:00',
+                'UTC+05:30',
+                'UTC+08:00',
+                'UTC+09:00',
+                'UTC+12:00',
+            ]);
             $table->text('short_description');
             $table->enum('category', ['workshop', 'conference', 'webinar']);
             $table->enum('repeat', ['na', 'daily', 'weekly', 'monthly', 'annually', 'custom']);

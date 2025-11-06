@@ -32,7 +32,7 @@ class EventController extends Controller
         $items = $items->paginate($pagination);
 
         if($items->isEmpty()) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $items->map(function($item) {
@@ -49,7 +49,7 @@ class EventController extends Controller
         $event = $event->first();
 
         if(!$event) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $this->processData($event);
@@ -66,6 +66,7 @@ class EventController extends Controller
             'date' => 'required|date|after_or_equal:today',
             'start_time' => ['required','regex:/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/'],
             'end_time' => ['required','regex:/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/'],
+            'timezone' => 'required|in:UTC-08:00,UTC-06:00,UTC-03:00,UTC±00:00,UTC+01:00,UTC+03:00,UTC+05:30,UTC+08:00,UTC+09:00,UTC+12:00',
             'repeat' => 'required|in:na,daily,weekly,monthly,annually',
             'content' => 'required|min:3',
             'location' => 'required|min:3',
@@ -99,7 +100,7 @@ class EventController extends Controller
         $event = Event::find($id);
 
         if(!$event) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $validator = Validator::make($request->all(), [
@@ -109,6 +110,7 @@ class EventController extends Controller
             'date' => 'required|date|after_or_equal:today',
             'start_time' => ['required','regex:/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/'],
             'end_time' => ['required','regex:/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/'],
+            'timezone' => 'required|in:UTC-08:00,UTC-06:00,UTC-03:00,UTC±00:00,UTC+01:00,UTC+03:00,UTC+05:30,UTC+08:00,UTC+09:00,UTC+12:00',
             'repeat' => 'required|in:na,daily,weekly,monthly,annually',
             'content' => 'required|min:3',
             'location' => 'required|min:3',
@@ -147,7 +149,7 @@ class EventController extends Controller
         $event = Event::find($id);
 
         if(!$event) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $event->delete();

@@ -18,7 +18,7 @@ class NoticeCategoryController extends Controller
         $items = $items->paginate($pagination);
 
         if($items->isEmpty()) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         return successResponse('success', 200, $items);
@@ -31,7 +31,7 @@ class NoticeCategoryController extends Controller
         $notice_category = $notice_category->first();
 
         if(!$notice_category) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         return successResponse('success', 200, $notice_category);
@@ -59,7 +59,7 @@ class NoticeCategoryController extends Controller
         $notice_category = NoticeCategory::find($id);
 
         if(!$notice_category) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $validator = Validator::make($request->all(), [
@@ -82,7 +82,7 @@ class NoticeCategoryController extends Controller
         $notice_category = NoticeCategory::find($id);
 
         if(!$notice_category) {
-            return errorResponse('No data found', 404);
+            return errorResponse('No data found', 200);
         }
 
         $notice_category->delete();

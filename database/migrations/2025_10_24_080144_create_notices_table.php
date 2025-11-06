@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->string('thumbnail');
             $table->string('file');
             $table->string('link');
             $table->boolean('status')->default(1);

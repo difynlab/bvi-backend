@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('legislations', function (Blueprint $table) {
+        Schema::create('membership_plans', function (Blueprint $table) {
             $table->id();
-            $table->text('description')->nullable();
-            $table->text('files')->nullable();
-            $table->string('links')->nullable();
+            $table->string('title');
+            $table->text('description');
+            $table->text('eligibility_criteria');
+            $table->text('perks');
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('legislations');
+        Schema::dropIfExists('membership_plans');
     }
 };
