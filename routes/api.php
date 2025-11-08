@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ImportantInfoController;
 use App\Http\Controllers\LegislationController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MembershipPlanController;
@@ -93,6 +94,12 @@ Route::middleware('auth:api')->group(function () {
                 Route::get('{id}', 'show');
             });
         // Membership plan routes
+
+        // Important info routes
+            Route::controller(ImportantInfoController::class)->prefix('important-info')->group(function() {
+                Route::get('/', 'index');
+            });
+        // Important info routes
     };
 // Shared routes
 
@@ -172,6 +179,12 @@ Route::middleware('auth:api')->group(function () {
                 Route::delete('{id}', 'destroy');
             });
         // Membership plan routes
+
+        // Important info routes
+            Route::controller(ImportantInfoController::class)->prefix('important-info')->group(function() {
+                Route::post('/', 'update');
+            });
+        // Important info routes
     };
 // Admin routes
 
