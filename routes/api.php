@@ -8,6 +8,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\ImportantInfoController;
 use App\Http\Controllers\LegislationController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\MemberFirmController;
 use App\Http\Controllers\MembershipPlanController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\NoticeCategoryController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\NoticeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportCategoryController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SpecializationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('login', function () {
@@ -100,6 +102,20 @@ Route::middleware('auth:api')->group(function () {
                 Route::get('/', 'index');
             });
         // Important info routes
+
+        // Specialization routes
+            Route::controller(SpecializationController::class)->prefix('specializations')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Specialization routes
+
+        // Member firm routes
+            Route::controller(MemberFirmController::class)->prefix('member-firms')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Member firm routes
     };
 // Shared routes
 
@@ -185,6 +201,22 @@ Route::middleware('auth:api')->group(function () {
                 Route::post('/', 'update');
             });
         // Important info routes
+
+        // Specialization routes
+            Route::controller(SpecializationController::class)->prefix('specializations')->group(function() {
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Specialization routes
+
+        // Member firm routes
+            Route::controller(MemberFirmController::class)->prefix('member-firms')->group(function() {
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Member firm routes
     };
 // Admin routes
 
