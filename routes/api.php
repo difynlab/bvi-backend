@@ -103,6 +103,12 @@ Route::middleware('auth:api')->group(function () {
             });
         // Important info routes
 
+        // Expert info routes
+            Route::controller(ExpertinfoController::class)->prefix('expert-info')->group(function() {
+                Route::get('/', 'index');
+            });
+        // Expert info routes
+
         // Specialization routes
             Route::controller(SpecializationController::class)->prefix('specializations')->group(function() {
                 Route::get('/', 'index');
@@ -201,7 +207,9 @@ Route::middleware('auth:api')->group(function () {
                 Route::post('/', 'update');
             });
         // Important info routes
-
+            Route::controller(ExpertinfoController::class)->prefix('expert-info')->group(function() {
+                Route::post('/', 'update');
+            });
         // Specialization routes
             Route::controller(SpecializationController::class)->prefix('specializations')->group(function() {
                 Route::post('/', 'store');
