@@ -17,9 +17,8 @@ return new class extends Migration
             $table->text('description');
             $table->string('image');
             $table->string('website_link');
-            $table->string('postal_address');
+            $table->string('address');
             $table->string('contact_number');
-            $table->string('location');
             $table->string('email');
             $table->boolean('status')->default(1);
 
