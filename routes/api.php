@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ImportantInfoController;
+use App\Http\Controllers\ExpertInfoController;
 use App\Http\Controllers\LegislationController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberFirmController;
@@ -104,7 +105,7 @@ Route::middleware('auth:api')->group(function () {
         // Important info routes
 
         // Expert info routes
-            Route::controller(ExpertinfoController::class)->prefix('expert-info')->group(function() {
+            Route::controller(ExpertInfoController::class)->prefix('expert-info')->group(function() {
                 Route::get('/', 'index');
             });
         // Expert info routes
@@ -207,9 +208,13 @@ Route::middleware('auth:api')->group(function () {
                 Route::post('/', 'update');
             });
         // Important info routes
-            Route::controller(ExpertinfoController::class)->prefix('expert-info')->group(function() {
-                Route::post('/', 'update');
+
+        // Expert info routes
+            Route::controller(ExpertInfoController::class)->prefix('expert-info')->group(function() {
+                Route::post( '/', 'update');
             });
+        // Expert info routes
+
         // Specialization routes
             Route::controller(SpecializationController::class)->prefix('specializations')->group(function() {
                 Route::post('/', 'store');
