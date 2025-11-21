@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Expertinfo;
+use App\Models\ExpertInfo;
 use Illuminate\Database\Seeder;
 
-class ExpertinfoSeeder extends Seeder
+class ExpertInfoSeeder extends Seeder
 {
     public function run()
     {

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['admin', 'member']);
             $table->string('image')->nullable();
+            $table->string('member_firms')->nullable();
             $table->boolean('is_new')->default(1);
             $table->boolean('status')->default(1);
             $table->rememberToken();

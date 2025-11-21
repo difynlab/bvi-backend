@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 
 class ExpertInfoController extends Controller
 {
-    
     public function index()
     {
         $item = ExpertInfo::find(1);
@@ -29,10 +28,8 @@ class ExpertInfoController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'text' => 'required|min:3',
-        ], 
-
-        );
+            'content' => 'required|min:3',
+        ]);
 
         if($validator->fails()) {
             return errorResponse('Validation failed', 400, $validator->errors());

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MemberFirm;
 use App\Models\MembershipPlan;
 use App\Models\Payment;
+use App\Models\Specialization;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -30,6 +32,19 @@ class MemberController extends Controller
             return $item;
         });
 
+        $member_firms = json_decode($item->member_firms);
+
+        if($member_firms) {
+            $new_member_firms = [];
+            foreach ($member_firms as $key => $member_firm) {
+                $firm = MemberFirm::find($member_firm);
+                $firm->specialization_id = Specialization::find($firm->specialization_id);
+                $new_member_firms[] = $firm;
+            }
+
+            $item->member_firms = $new_member_firms;
+        }
+        
         return $item;
     }
 
@@ -72,10 +87,13 @@ class MemberController extends Controller
             'email' => 'required|email|min:3|max:255|unique:users,email,',
             'phone' => 'required|numeric|unique:users,phone,',
             'image' => 'max:5120',
+            'member_firms' => 'nullable',
+            'member_firms.*' => 'exists:member_firms,id,status,1',
             'password' => 'required|min:8',
             'confirm_password' => 'required|same:password',
         ], [
-            'image.max' => 'The image must not be greater than 5120 kilobytes.'
+            'member_firm.*.exists' => 'The selected member firm is invalid or its status is not active.',
+            'image.max' => 'The image must not be greater than 5120 kilobytes.',
         ]);
 
         if($validator->fails()) {
@@ -90,6 +108,7 @@ class MemberController extends Controller
             'confirm_password'
         );
         $data['image'] = $processed_image;
+        $data['member_firms'] = $request->member_firms ? json_encode($request->member_firms) : null;
         $data['password'] = Hash::make($request->password);
 
         $member = User::create($data);
@@ -113,7 +132,10 @@ class MemberController extends Controller
             'email' => 'required|email|min:3|max:255|unique:users,email,'.$member->id,
             'phone' => 'required|numeric|unique:users,phone,'.$member->id,
             'image' => 'max:5120',
+            'member_firms' => 'nullable',
+            'member_firms.*' => 'exists:member_firms,id,status,1',
         ], [
+            'member_firm.*.exists' => 'The selected member firm is invalid or its status is not active.',
             'image.max' => 'The image must not be greater than 5120 kilobytes.'
         ]);
 
@@ -155,6 +177,7 @@ class MemberController extends Controller
         }
 
         $data['image'] = $processed_image;
+        $data['member_firms'] = $request->member_firms ? json_encode($request->member_firms) : null;
         $member->fill($data)->save();
 
         $this->processData($member);
