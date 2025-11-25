@@ -10,6 +10,7 @@ use App\Http\Controllers\ExpertInfoController;
 use App\Http\Controllers\LegislationController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberFirmController;
+use App\Http\Controllers\MemberSubscriptionDetailsController;
 use App\Http\Controllers\MembershipPlanController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\NoticeCategoryController;
@@ -123,6 +124,13 @@ Route::middleware('auth:api')->group(function () {
                 Route::get('{id}', 'show');
             });
         // Member firm routes
+
+        // Member subscription details routes
+            Route::controller(MemberSubscriptionDetailsController::class)->prefix('member-subscription-details')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Member subscription details routes
     };
 // Shared routes
 
@@ -230,6 +238,13 @@ Route::middleware('auth:api')->group(function () {
                 Route::delete('{id}', 'destroy');
             });
         // Member firm routes
+
+        // Member subscription details routes
+            Route::controller(MemberSubscriptionDetailsController::class)->prefix('member-subscription-details')->group(function() {
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+            });
+        // Member subscription details routes
     };
 // Admin routes
 
