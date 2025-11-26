@@ -98,4 +98,32 @@ class ProfileController extends Controller
 
         return successResponse('Update successful', 200, $user);
     }
+
+    public function membershipRenew(Request $request)
+    {
+        $member = Auth::user();
+
+        if(!$member) {
+            return errorResponse('No data found', 200);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'membership_plan_id' => 'required|exists:membership_plans,id,status,1',
+            'date' => 'required|date',
+            'amount' => 'required|numeric',
+            'status' => 'required|in:0,1,2'
+        ]);
+
+        if($validator->fails()) {
+            return errorResponse('Validation failed', 400, $validator->errors());
+        }
+
+        $data = $request->all();
+        $data['user_id'] = $member->id;
+        Payment::create($data);
+
+        $this->processData($member);
+
+        return successResponse('Create successful', 200, $member);
+    }
 }

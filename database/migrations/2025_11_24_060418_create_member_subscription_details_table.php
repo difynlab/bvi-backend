@@ -13,14 +13,6 @@ return new class extends Migration
     {
         Schema::create('member_subscription_details', function (Blueprint $table) {
             $table->id();
-            $table->date('subscription_start_date')->nullable();
-            $table->date('subscription_end_date')->nullable();
-            $table->boolean('status')->default(1);
-            
-            $table->string('membership_type')->nullable();
-            $table->string('ordinary_membership_plan')->nullable();
-            $table->string('payment_method')->nullable();
-            $table->string('membership_signature')->nullable();
 
             $table->string('company_name')->nullable();
             $table->text('company_address')->nullable();
@@ -28,12 +20,12 @@ return new class extends Migration
             $table->string('company_email')->nullable();
             $table->string('company_website')->nullable();
             $table->text('company_profile')->nullable();
-            $table->string('office_presence_regions')->nullable();
+            $table->text('office_presence_regions')->nullable();
             $table->text('business_categories')->nullable();
             $table->string('other_business_category')->nullable();
             $table->string('director_name')->nullable();
             $table->date('director_signed_at')->nullable();
-            $table->string('signature')->nullable();
+            $table->string('company_signature')->nullable();
 
             $table->string('lead_contact_name')->nullable();
             $table->string('lead_contact_phone')->nullable();
@@ -68,6 +60,8 @@ return new class extends Migration
             $table->string('license_officer_2_phone')->nullable();
             $table->string('license_officer_2_title')->nullable();
             $table->string('license_officer_2_email')->nullable();
+            
+            $table->boolean('status')->default(1);
             
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             

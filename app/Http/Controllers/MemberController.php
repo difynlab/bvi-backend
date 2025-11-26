@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MemberFirm;
 use App\Models\MembershipPlan;
+use App\Models\MemberSubscriptionDetail;
 use App\Models\Payment;
 use App\Models\Specialization;
 use App\Models\User;
@@ -44,6 +45,8 @@ class MemberController extends Controller
 
             $item->member_firms = $new_member_firms;
         }
+
+        $item->member_subscription_details = MemberSubscriptionDetail::where('user_id', $item->id)->first();
         
         return $item;
     }

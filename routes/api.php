@@ -10,7 +10,7 @@ use App\Http\Controllers\ExpertInfoController;
 use App\Http\Controllers\LegislationController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberFirmController;
-use App\Http\Controllers\MemberSubscriptionDetailsController;
+use App\Http\Controllers\MemberSubscriptionDetailController;
 use App\Http\Controllers\MembershipPlanController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\NoticeCategoryController;
@@ -85,13 +85,6 @@ Route::middleware('auth:api')->group(function () {
             });
         // Legislation routes
 
-        // Profile routes
-            Route::controller(ProfileController::class)->prefix('profile')->group(function() {
-                Route::get('/', 'index');
-                Route::post('/', 'update');
-            });
-        // Profile routes
-
         // Membership plan routes
             Route::controller(MembershipPlanController::class)->prefix('membership-plans')->group(function() {
                 Route::get('/', 'index');
@@ -125,12 +118,20 @@ Route::middleware('auth:api')->group(function () {
             });
         // Member firm routes
 
-        // Member subscription details routes
-            Route::controller(MemberSubscriptionDetailsController::class)->prefix('member-subscription-details')->group(function() {
+        // Profile routes
+            Route::controller(ProfileController::class)->prefix('profile')->group(function() {
                 Route::get('/', 'index');
-                Route::get('{id}', 'show');
+                Route::post('/', 'update');
+                Route::post('membership-renew', 'membershipRenew');
             });
-        // Member subscription details routes
+        // Profile routes
+
+        // Member subscription detail routes
+            Route::controller(MemberSubscriptionDetailController::class)->prefix('member-subscription-details')->group(function() {
+                Route::get('/', 'index');
+                Route::post('/', 'update');
+            });
+        // Member subscription detail routes
     };
 // Shared routes
 
@@ -191,18 +192,6 @@ Route::middleware('auth:api')->group(function () {
             });
         // Legislation routes
 
-        // Member routes
-            Route::controller(MemberController::class)->prefix('members')->group(function() {
-                Route::get('/', 'index');
-                Route::get('{id}', 'show');
-                Route::post('/', 'store');
-                Route::post('{id}', 'update');
-                Route::delete('{id}', 'destroy');
-
-                Route::post('{id}/renew', 'renew');
-            });
-        // Member routes
-
         // Membership plan routes
             Route::controller(MembershipPlanController::class)->prefix('membership-plans')->group(function() {
                 Route::post('/', 'store');
@@ -239,12 +228,17 @@ Route::middleware('auth:api')->group(function () {
             });
         // Member firm routes
 
-        // Member subscription details routes
-            Route::controller(MemberSubscriptionDetailsController::class)->prefix('member-subscription-details')->group(function() {
+        // Member routes
+            Route::controller(MemberController::class)->prefix('members')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
                 Route::post('/', 'store');
                 Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+
+                Route::post('{id}/renew', 'renew');
             });
-        // Member subscription details routes
+        // Member routes
     };
 // Admin routes
 
