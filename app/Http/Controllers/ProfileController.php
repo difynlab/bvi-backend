@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MemberSubscriptionDetail;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,8 @@ class ProfileController extends Controller
         }
         
         $user->payments = Payment::where('user_id', $user->id)->orderBy('id', 'desc')->get();
+
+        $user->member_subscription_details = MemberSubscriptionDetail::where('user_id', $user->id)->first();
 
         return $user;
     }
