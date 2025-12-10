@@ -122,7 +122,7 @@ Route::middleware('auth:api')->group(function () {
             Route::controller(ProfileController::class)->prefix('profile')->group(function() {
                 Route::get('/', 'index');
                 Route::post('/', 'update');
-                Route::post('membership-renew', 'membershipRenew');
+                Route::post('renew-membership', 'renewMembership');
             });
         // Profile routes
 
@@ -236,7 +236,8 @@ Route::middleware('auth:api')->group(function () {
                 Route::post('{id}', 'update');
                 Route::delete('{id}', 'destroy');
 
-                Route::post('{id}/renew', 'renew');
+                Route::post('{id}/renew-membership', 'renewMembership');
+                Route::post('{id}/update-membership/{payment_id}', 'updateMembership');
             });
         // Member routes
     };

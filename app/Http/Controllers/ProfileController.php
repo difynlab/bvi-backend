@@ -45,12 +45,17 @@ class ProfileController extends Controller
             'email' => 'required|email|min:3|max:255|unique:users,email,'.$user->id,
             'phone' => 'required|numeric|unique:users,phone,'.$user->id,
             'image' => 'max:5120',
+            'password' => 'required',
         ], [
             'image.max' => 'The image must not be greater than 5120 kilobytes.'
         ]);
 
         if($validator->fails()) {
             return errorResponse('Validation failed', 400, $validator->errors());
+        }
+
+        if(!Hash::check($request->password, $user->password)) {
+            return errorResponse('Incorrect password', 400);
         }
 
         // Image
@@ -69,9 +74,8 @@ class ProfileController extends Controller
             'confirm_password'
         );
 
-        if($request->password || $request->new_password || $request->confirm_password) {
+        if($request->new_password || $request->confirm_password) {
             $validator = Validator::make($request->all(), [
-                'password' => 'required',
                 'new_password' => 'required|min:8',
                 'confirm_password' => 'required|same:new_password',
             ], [
@@ -80,10 +84,6 @@ class ProfileController extends Controller
 
             if($validator->fails()) {
                 return errorResponse('Validation failed', 400, $validator->errors());
-            }
-
-            if(!Hash::check($request->password, $user->password)) {
-                return errorResponse('Incorrect password', 400);
             }
 
             $data['password'] = Hash::make($request->new_password);
@@ -102,7 +102,7 @@ class ProfileController extends Controller
         return successResponse('Update successful', 200, $user);
     }
 
-    public function membershipRenew(Request $request)
+    public function renewMembership(Request $request)
     {
         $member = Auth::user();
 

@@ -27,6 +27,7 @@ class MemberController extends Controller
         $item->payments = $payments->map(function($item) {
             $membership_plan = MembershipPlan::find($item->membership_plan_id);
             $membership_plan->perks = json_decode($membership_plan['perks']);
+            $membership_plan->pricing = json_decode($membership_plan['pricing']);
 
             $item->membership_plan_id = $membership_plan;
 
@@ -35,8 +36,9 @@ class MemberController extends Controller
 
         $member_firms = json_decode($item->member_firms);
 
+        $new_member_firms = [];
+        $item->member_firms = $new_member_firms;
         if($member_firms) {
-            $new_member_firms = [];
             foreach ($member_firms as $key => $member_firm) {
                 $firm = MemberFirm::find($member_firm);
                 $firm->specialization_id = Specialization::find($firm->specialization_id);
@@ -201,7 +203,7 @@ class MemberController extends Controller
         return successResponse('Delete successful', 200);
     }
 
-    public function renew(Request $request, $id)
+    public function renewMembership(Request $request, $id)
     {
         $member = User::find($id);
 
@@ -223,6 +225,36 @@ class MemberController extends Controller
         $data = $request->all();
         $data['user_id'] = $member->id;
         Payment::create($data);
+
+        $this->processData($member);
+
+        return successResponse('Create successful', 200, $member);
+    }
+
+    public function updateMembership(Request $request, $id, $payment_id)
+    {
+        $member = User::find($id);
+
+        if(!$member) {
+            return errorResponse('No data found', 200);
+        }
+
+        $payment = Payment::find($payment_id);
+
+        if(!$payment) {
+            return errorResponse('No data found', 200);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:0,1,2'
+        ]);
+
+        if($validator->fails()) {
+            return errorResponse('Validation failed', 400, $validator->errors());
+        }
+
+        $data = $request->all();
+        $payment->fill($data)->save();
 
         $this->processData($member);
 

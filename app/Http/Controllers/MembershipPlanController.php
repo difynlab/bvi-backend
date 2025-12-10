@@ -11,6 +11,7 @@ class MembershipPlanController extends Controller
     private function processData($item)
     {
         $item->perks = json_decode($item->perks);
+        $item->pricing = json_decode($item->pricing);
 
         return $item;
     }
@@ -58,6 +59,8 @@ class MembershipPlanController extends Controller
             'eligibility_criteria' => 'required|min:3',
             'perks' => 'required|array',
             'perks.*' => 'required|min:3',
+            'pricing' => 'required|array',
+            'pricing.*' => 'required|numeric',
             'status' => 'required|in:0,1',
         ]);
 
@@ -67,6 +70,7 @@ class MembershipPlanController extends Controller
 
         $data = $request->all();
         $data['perks'] = json_encode($request->perks);
+        $data['pricing'] = json_encode($request->pricing);
         $membership_plan = MembershipPlan::create($data);
 
         $this->processData($membership_plan);
@@ -88,6 +92,8 @@ class MembershipPlanController extends Controller
             'eligibility_criteria' => 'required|min:3',
             'perks' => 'required|array',
             'perks.*' => 'required|min:3',
+            'pricing' => 'required|array',
+            'pricing.*' => 'required|numeric',
             'status' => 'required|in:0,1',
         ]);
 
@@ -97,6 +103,7 @@ class MembershipPlanController extends Controller
 
         $data = $request->all();
         $data['perks'] = json_encode($request->perks);
+        $data['pricing'] = json_encode($request->pricing);
         $membership_plan->fill($data)->save();
 
         $this->processData($membership_plan);
