@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->string('file');
-            $table->string('link');
+            $table->string('file')->nullable();
+            $table->string('link')->nullable();
+            $table->date('publish_date');
             $table->boolean('status')->default(1);
 
             $table->foreignId('notice_category_id')->constrained()->onDelete('cascade');

@@ -15,11 +15,6 @@ class NoticeController extends Controller
     {
         $item->notice_category = NoticeCategory::find($item->notice_category_id);
 
-        if($item->thumbnail) {
-            $item->original_thumbnail = url('') . '/storage/notices/' . $item->thumbnail;
-            $item->blurred_thumbnail = url('') . '/storage/notices/thumbnails/' . $item->thumbnail;
-        }
-
         if($item->file) {
             $item->file = url('') . '/storage/notices/' . $item->file;
         }
@@ -67,12 +62,13 @@ class NoticeController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'description' => 'required|min:3',
-            'file' => 'required|mimes:pdf|max:15360',
-            'link' => 'required|min:3',
+            'file' => 'nullable|mimes:pdf,png,jpg,jpeg|max:5120',
+            'link' => 'nullable|min:3',
+            'publish_date' => 'required',
             'notice_category_id' => 'required|exists:notice_categories,id,status,1',
             'status' => 'required|in:0,1'
         ], [
-            'file.max' => 'The file must not be greater than 15360 kilobytes.',
+            'file.max' => 'The file must not be greater than 5120 kilobytes.',
             'notice_category_id.exists' => 'The selected notice category is invalid or its status is not active.'
         ]);
 
@@ -81,8 +77,18 @@ class NoticeController extends Controller
         }
 
         $file = $request->file('file');
-        $file_name = Str::uuid()->toString().'.pdf';
-        Storage::put("notices/$file_name", file_get_contents($file));
+        $file_name = null;
+        if($file) {
+            $extension = strtolower($file->getClientOriginalExtension());
+
+            if($extension === 'pdf') {
+                $file_name = Str::uuid()->toString() . '.pdf';
+                Storage::put("notices/{$file_name}", file_get_contents($file));
+            }
+            else {
+                $file_name = process_image($file, 'notices');
+            }
+        }
 
         $data = $request->all();
         $data['file'] = $file_name;
@@ -104,12 +110,13 @@ class NoticeController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'description' => 'required|min:3',
-            'file' => 'nullable|mimes:pdf|max:15360',
-            'link' => 'required|min:3',
+            'file' => 'nullable|mimes:pdf,png,jpg,jpeg|max:5120',
+            'link' => 'nullable|min:3',
+            'publish_date' => 'required',
             'notice_category_id' => 'required|exists:notice_categories,id,status,1',
             'status' => 'required|in:0,1'
         ], [
-            'file.max' => 'The file must not be greater than 15360 kilobytes.',
+            'file.max' => 'The file must not be greater than 5120 kilobytes.',
             'notice_category_id.exists' => 'The selected notice category is invalid or its status is not active.'
         ]);
 
@@ -117,15 +124,20 @@ class NoticeController extends Controller
             return errorResponse('Validation failed', 400, $validator->errors());
         }
 
-        if($request->file('file')) {
-            $file = $request->file('file');
-            $file_name = Str::uuid()->toString().'.pdf';
-            Storage::put("notices/$file_name", file_get_contents($file));
+        $file = $request->file('file');
+        $file_name = $notice->file;
+        if($file) {
+            $extension = strtolower($file->getClientOriginalExtension());
 
-            Storage::delete("notices/$notice->file");
-        }
-        else {
-            $file_name = $notice->file;
+            if($extension === 'pdf') {
+                $file_name = Str::uuid()->toString().'.pdf';
+                Storage::put("notices/$file_name", file_get_contents($file));
+
+                Storage::delete("notices/$notice->file");
+            }
+            else {
+                $file_name = process_image($file, 'notices', $notice->file);
+            }
         }
 
         $data = $request->all();

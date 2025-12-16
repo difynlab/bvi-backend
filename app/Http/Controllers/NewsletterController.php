@@ -64,8 +64,9 @@ class NewsletterController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'description' => 'required|min:3',
-            'file' => 'required|mimes:pdf|max:15360',
-            'link' => 'required|min:3',
+            'file' => 'nullable|mimes:pdf|max:15360',
+            'link' => 'nullable|min:3',
+            'publish_date' => 'required',
             'status' => 'required|in:0,1'
         ], [
             'file.max' => 'The file must not be greater than 15360 kilobytes.'
@@ -76,8 +77,11 @@ class NewsletterController extends Controller
         }
 
         $file = $request->file('file');
-        $file_name = Str::uuid()->toString().'.pdf';
-        Storage::put("newsletters/$file_name", file_get_contents($file));
+        $file_name = null;
+        if($file) {
+            $file_name = Str::uuid()->toString().'.pdf';
+            Storage::put("newsletters/$file_name", file_get_contents($file));
+        }
 
         $data = $request->all();
         $data['file'] = $file_name;
@@ -100,7 +104,8 @@ class NewsletterController extends Controller
             'name' => 'required|min:3',
             'description' => 'required|min:3',
             'file' => 'nullable|mimes:pdf|max:15360',
-            'link' => 'required|min:3',
+            'link' => 'nullable|min:3',
+            'publish_date' => 'required',
             'status' => 'required|in:0,1'
         ], [
             'file.max' => 'The file must not be greater than 15360 kilobytes.'
