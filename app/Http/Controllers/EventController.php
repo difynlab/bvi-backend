@@ -63,7 +63,8 @@ class EventController extends Controller
             'title' => 'required|min:3',
             'category' => 'required|in:workshop,webinar,conference',
             'short_description' => 'required|min:3',
-            'date' => 'required|date|after_or_equal:today',
+            // 'date' => 'required|date|after_or_equal:today',
+            'date' => 'required|date',
             'start_time' => ['required','regex:/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/'],
             'end_time' => ['required','regex:/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/'],
             'timezone' => 'required|in:UTC-08:00,UTC-06:00,UTC-03:00,UTC±00:00,UTC+01:00,UTC+03:00,UTC+05:30,UTC+08:00,UTC+09:00,UTC+12:00',
@@ -77,7 +78,7 @@ class EventController extends Controller
             'thumbnail.max' => 'The thumbnail must not be greater than 5120 kilobytes.',
             'start_time.regex' => 'The time must be in the format HH:MM.',
             'end_time.regex' => 'The end time must be in the format HH:MM.',
-            'date.after_or_equal' => 'The date must be today or later.',
+            // 'date.after_or_equal' => 'The date must be today or later.',
         ]);
 
         if($validator->fails()) {
@@ -107,7 +108,8 @@ class EventController extends Controller
             'title' => 'required|min:3',
             'category' => 'required|in:workshop,webinar,conference',
             'short_description' => 'required|min:3',
-            'date' => 'required|date|after_or_equal:today',
+            // 'date' => 'required|date|after_or_equal:today',
+            'date' => 'required|date',
             'start_time' => ['required','regex:/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/'],
             'end_time' => ['required','regex:/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/'],
             'timezone' => 'required|in:UTC-08:00,UTC-06:00,UTC-03:00,UTC±00:00,UTC+01:00,UTC+03:00,UTC+05:30,UTC+08:00,UTC+09:00,UTC+12:00',
@@ -121,7 +123,7 @@ class EventController extends Controller
             'thumbnail.max' => 'The thumbnail must not be greater than 5120 kilobytes.',
             'start_time.regex' => 'The time must be in the format HH:MM.',
             'end_time.regex' => 'The end time must be in the format HH:MM.',
-            'date.after_or_equal' => 'The date must be today or later.',
+            // 'date.after_or_equal' => 'The date must be today or later.',
         ]);
 
         if($validator->fails()) {
