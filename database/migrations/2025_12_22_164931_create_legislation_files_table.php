@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('legislations', function (Blueprint $table) {
+        Schema::create('legislation_files', function (Blueprint $table) {
             $table->id();
-            $table->text('description')->nullable();
-            // $table->text('files')->nullable();
-            $table->string('links')->nullable();
+            $table->string('title');
+            $table->string('file');
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('legislations');
+        Schema::dropIfExists('legislation_files');
     }
 };
