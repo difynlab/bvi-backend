@@ -21,7 +21,7 @@ class ForgotPasswordController extends Controller
             return errorResponse('Validation failed', 400, $validator->errors());
         }
 
-        $user = User::where('email', $request->email)->where('status', 2)->first();
+        $user = User::where('email', $request->email)->where('status', 1)->first();
 
         if(!$user) {
             return errorResponse('Email not found', 404);

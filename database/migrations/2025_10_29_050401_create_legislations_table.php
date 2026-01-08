@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('legislations', function (Blueprint $table) {
             $table->id();
-            $table->text('description')->nullable();
+            // $table->text('description')->nullable();
             // $table->text('files')->nullable();
-            $table->string('links')->nullable();
+            // $table->string('links')->nullable();
+            $table->text('title');
+            $table->string('file');
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }

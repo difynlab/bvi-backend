@@ -8,7 +8,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\ImportantInfoController;
 use App\Http\Controllers\ExpertInfoController;
 use App\Http\Controllers\LegislationController;
-use App\Http\Controllers\LegislationFileController;
+// use App\Http\Controllers\LegislationFileController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberFirmController;
 use App\Http\Controllers\MemberSubscriptionDetailController;
@@ -81,11 +81,16 @@ Route::middleware('auth:api')->group(function () {
         // Report routes
 
         // Legislation routes
-            Route::controller(LegislationController::class)->prefix('legislation')->group(function() {
-                Route::get('/', 'index');
-            });
+            // Route::controller(LegislationController::class)->prefix('legislation')->group(function() {
+            //     Route::get('/', 'index');
+            // });
 
-            Route::controller(LegislationFileController::class)->prefix('legislation-files')->group(function() {
+            // Route::controller(LegislationFileController::class)->prefix('legislation-files')->group(function() {
+            //     Route::get('/', 'index');
+            //     Route::get('{id}', 'show');
+            // });
+
+            Route::controller(LegislationController::class)->prefix('legislations')->group(function() {
                 Route::get('/', 'index');
                 Route::get('{id}', 'show');
             });
@@ -193,11 +198,17 @@ Route::middleware('auth:api')->group(function () {
         // Report routes
 
         // Legislation routes
-            Route::controller(LegislationController::class)->prefix('legislation')->group(function() {
-                Route::post('/', 'update');
-            });
+            // Route::controller(LegislationController::class)->prefix('legislation')->group(function() {
+            //     Route::post('/', 'update');
+            // });
 
-            Route::controller(LegislationFileController::class)->prefix('legislation-files')->group(function() {
+            // Route::controller(LegislationFileController::class)->prefix('legislation-files')->group(function() {
+            //     Route::post('/', 'store');
+            //     Route::post('{id}', 'update');
+            //     Route::delete('{id}', 'destroy');
+            // });
+
+            Route::controller(LegislationController::class)->prefix('legislations')->group(function() {
                 Route::post('/', 'store');
                 Route::post('{id}', 'update');
                 Route::delete('{id}', 'destroy');
