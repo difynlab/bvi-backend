@@ -7,7 +7,12 @@
 <p style="font-size: 15px; line-height: 1.6; margin: 0;">We received a request to reset your password for your {{ config('app.name') }} account. Click the button below to reset it:</p>
 
 <div style="margin: 25px 0;">
-    <a style="margin: 0; background-color: #353535; color: white; border-radius: 8px; padding: 15px 25px; display: inline-block; font-size: 17px; text-decoration: none;" href="#">Reset Password</a>
+  <a
+    style="margin: 0; background-color: #353535; color: white; border-radius: 8px; padding: 15px 25px; display: inline-block; font-size: 17px; text-decoration: none;"
+    href="{{ config('app.frontend_url') . '/reset-password/' . $mail['user']->email . '/' . $mail['token'] }}"
+  >
+    Reset Password
+  </a>
 </div>
 
 <p style="font-size: 14px; line-height: 1.6; margin: 0;">If you did not request a password reset, you can safely ignore this email.</p>
