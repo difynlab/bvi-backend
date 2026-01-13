@@ -16,6 +16,7 @@ use App\Http\Controllers\MembershipPlanController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\NoticeCategoryController;
 use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportCategoryController;
 use App\Http\Controllers\ReportController;
@@ -143,6 +144,13 @@ Route::middleware('auth:api')->group(function () {
                 Route::post('/', 'update');
             });
         // Member subscription detail routes
+
+        // Notification route
+            Route::controller(NotificationController::class)->prefix('notifications')->group(function() {
+                Route::get('/', 'index');
+                Route::get('mark-seen', 'markSeen');
+            });
+        // Notification route
     };
 // Shared routes
 
