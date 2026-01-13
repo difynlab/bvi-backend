@@ -6,7 +6,9 @@ use App\Models\Event;
 use App\Models\Legislation;
 use App\Models\Newsletter;
 use App\Models\Notice;
+use App\Models\Payment;
 use App\Models\Report;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class NotificationController extends Controller
@@ -90,7 +92,19 @@ class NotificationController extends Controller
             ];
         }
         else {
-            $data = 'Admin notification implementation is inprogress. Coming soon.';
+            $users = User::where('role', 'member')->where('is_new', 1)->get();
+
+            $payments = Payment::where('is_new', 1)->get();
+
+            $data = [
+                'users'  => $users,
+                'payments' => $payments,
+                'counts'  => [
+                    'users'  => $users->count(),
+                    'payments' => $payments->count(),
+                    'total'   => $users->count() + $payments->count()
+                ],
+            ];
         }
 
         return successResponse('success', 200, $data);
@@ -213,7 +227,9 @@ class NotificationController extends Controller
             });
         }
         else {
-            dd('Admin mark seen work inprogress. Coming soon.');
+            User::where('role', 'member')->where('is_new', 1)->update(['is_new' => 0]);
+
+            Payment::where('is_new', 1)->update(['is_new' => 0]);
         }
 
         return successResponse('success', 200);

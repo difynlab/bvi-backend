@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->date('date');
             $table->decimal('amount', 10, 2);
+            $table->boolean('is_new')->default(1);
             $table->boolean('status');
 
             $table->foreignId('membership_plan_id')->constrained()->onDelete('cascade');
