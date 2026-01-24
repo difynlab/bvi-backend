@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Newsletter;
+use App\Models\NewsletterCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -20,6 +21,8 @@ class NewsletterController extends Controller
         if($item->file) {
             $item->file = url('') . '/storage/newsletters/' . $item->file;
         }
+
+        $item->newsletter_category = NewsletterCategory::find($item->newsletter_category_id);
 
         return $item;
     }
@@ -67,9 +70,11 @@ class NewsletterController extends Controller
             'file' => 'nullable|mimes:pdf|max:15360',
             'link' => 'nullable|min:3',
             'publish_date' => 'required',
+            'newsletter_category_id' => 'required|exists:newsletter_categories,id,status,1',
             'status' => 'required|in:0,1'
         ], [
-            'file.max' => 'The file must not be greater than 15360 kilobytes.'
+            'file.max' => 'The file must not be greater than 15360 kilobytes.',
+            'newsletter_category_id.exists' => 'The selected newsletter category is invalid or its status is not active.'
         ]);
 
         if($validator->fails()) {
@@ -106,9 +111,11 @@ class NewsletterController extends Controller
             'file' => 'nullable|mimes:pdf|max:15360',
             'link' => 'nullable|min:3',
             'publish_date' => 'required',
+            'newsletter_category_id' => 'required|exists:newsletter_categories,id,status,1',
             'status' => 'required|in:0,1'
         ], [
-            'file.max' => 'The file must not be greater than 15360 kilobytes.'
+            'file.max' => 'The file must not be greater than 15360 kilobytes.',
+            'newsletter_category_id.exists' => 'The selected newsletter category is invalid or its status is not active.'
         ]);
 
         if($validator->fails()) {

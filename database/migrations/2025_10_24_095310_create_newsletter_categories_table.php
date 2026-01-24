@@ -11,16 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('legislations', function (Blueprint $table) {
+        Schema::create('newsletter_categories', function (Blueprint $table) {
             $table->id();
-            // $table->text('description')->nullable();
-            // $table->text('files')->nullable();
-            // $table->string('links')->nullable();
-            $table->text('title');
-            $table->string('file');
+            $table->string('title');
             $table->boolean('status')->default(1);
-
-            $table->foreignId('legislation_category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('legislations');
+        Schema::dropIfExists('newsletter_categories');
     }
 };

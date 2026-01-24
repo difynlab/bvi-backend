@@ -4,15 +4,18 @@ use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\EventCategoryController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ImportantInfoController;
 use App\Http\Controllers\ExpertInfoController;
+use App\Http\Controllers\LegislationCategoryController;
 use App\Http\Controllers\LegislationController;
 // use App\Http\Controllers\LegislationFileController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberFirmController;
 use App\Http\Controllers\MemberSubscriptionDetailController;
 use App\Http\Controllers\MembershipPlanController;
+use App\Http\Controllers\NewsletterCategoryController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\NoticeCategoryController;
 use App\Http\Controllers\NoticeController;
@@ -36,9 +39,15 @@ Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthenticationController::class, 'logout'])->name('logout');
 });
 
-
 // Shared routes
     $sharedRoutes = function () {
+        // Event category routes
+            Route::controller(EventCategoryController::class)->prefix('event-categories')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Event category routes
+
         // Events routes
             Route::controller(EventController::class)->prefix('events')->group(function() {
                 Route::get('/', 'index');
@@ -60,6 +69,13 @@ Route::middleware('auth:api')->group(function () {
             });
         // Notice routes
 
+        // Newsletter category routes
+            Route::controller(NewsletterCategoryController::class)->prefix('newsletter-categories')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Newsletter category routes
+
         // Newsletter routes
             Route::controller(NewsletterController::class)->prefix('newsletters')->group(function() {
                 Route::get('/', 'index');
@@ -80,6 +96,13 @@ Route::middleware('auth:api')->group(function () {
                 Route::get('{id}', 'show');
             });
         // Report routes
+
+        // Legislation category routes
+            Route::controller(LegislationCategoryController::class)->prefix('legislation-categories')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Legislation category routes
 
         // Legislation routes
             // Route::controller(LegislationController::class)->prefix('legislation')->group(function() {
@@ -154,9 +177,16 @@ Route::middleware('auth:api')->group(function () {
     };
 // Shared routes
 
-
 // Admin routes
     $adminRoutes = function () {
+        // Event category routes
+            Route::controller(EventCategoryController::class)->prefix('event-categories')->group(function() {
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Event category routes
+
         // Events routes
             Route::controller(EventController::class)->prefix('events')->group(function() {
                 Route::post('/', 'store');
@@ -181,6 +211,14 @@ Route::middleware('auth:api')->group(function () {
             });
         // Notice routes
 
+        // Newsletter category routes
+            Route::controller(NewsletterCategoryController::class)->prefix('newsletter-categories')->group(function() {
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Newsletter category routes
+
         // Newsletter routes
             Route::controller(NewsletterController::class)->prefix('newsletters')->group(function() {
                 Route::post('/', 'store');
@@ -204,6 +242,14 @@ Route::middleware('auth:api')->group(function () {
                 Route::delete('{id}', 'destroy');
             });
         // Report routes
+
+        // Legislation category routes
+            Route::controller(LegislationCategoryController::class)->prefix('legislation-categories')->group(function() {
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Legislation category routes
 
         // Legislation routes
             // Route::controller(LegislationController::class)->prefix('legislation')->group(function() {
@@ -274,11 +320,9 @@ Route::middleware('auth:api')->group(function () {
     };
 // Admin routes
 
-
 // Admin & member routes
     Route::middleware('auth:api')->group($sharedRoutes);
 // Admin & member routes
-
 
 // Admin only routes
     Route::middleware(['auth:api', 'role:admin'])

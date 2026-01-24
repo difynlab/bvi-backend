@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('link')->nullable();
             $table->date('publish_date');
             $table->boolean('status')->default(1);
+
+            $table->foreignId('newsletter_category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

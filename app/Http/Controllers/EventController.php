@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\EventCategory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -18,6 +19,8 @@ class EventController extends Controller
             $item->original_thumbnail = url('') . '/storage/events/' . $item->thumbnail;
             $item->blurred_thumbnail = url('') . '/storage/events/thumbnails/' . $item->thumbnail;
         }
+
+        $item->event_category = EventCategory::find($item->event_category_id);
 
         return $item;
     }
@@ -56,7 +59,7 @@ class EventController extends Controller
 
         return successResponse('success', 200, $event);
     }
-                                                                              
+    
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -73,12 +76,14 @@ class EventController extends Controller
             'location' => 'required|min:3',
             'register_link' => 'required|min:3',
             'thumbnail' => 'required|max:5120',
+            'event_category_id' => 'required|exists:event_categories,id,status,1',
             'status' => 'required|in:0,1',
         ], [
             'thumbnail.max' => 'The thumbnail must not be greater than 5120 kilobytes.',
             'start_time.regex' => 'The time must be in the format HH:MM.',
             'end_time.regex' => 'The end time must be in the format HH:MM.',
             // 'date.after_or_equal' => 'The date must be today or later.',
+            'event_category_id.exists' => 'The selected event category is invalid or its status is not active.'
         ]);
 
         if($validator->fails()) {
@@ -118,12 +123,14 @@ class EventController extends Controller
             'location' => 'required|min:3',
             'register_link' => 'required|min:3',
             'thumbnail' => 'nullable|max:5120',
+            'event_category_id' => 'required|exists:event_categories,id,status,1',
             'status' => 'required|in:0,1',
         ], [
             'thumbnail.max' => 'The thumbnail must not be greater than 5120 kilobytes.',
             'start_time.regex' => 'The time must be in the format HH:MM.',
             'end_time.regex' => 'The end time must be in the format HH:MM.',
             // 'date.after_or_equal' => 'The date must be today or later.',
+            'event_category_id.exists' => 'The selected event category is invalid or its status is not active.'
         ]);
 
         if($validator->fails()) {

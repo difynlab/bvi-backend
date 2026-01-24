@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Legislation;
+use App\Models\LegislationCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -98,6 +99,8 @@ class LegislationController extends Controller
             $item->file = url('') . '/storage/legislations/' . $item->file;
         }
 
+        $item->legislation_category = LegislationCategory::find($item->legislation_category_id);
+
         return $item;
     }
 
@@ -135,15 +138,17 @@ class LegislationController extends Controller
 
         return successResponse('success', 200, $legislation);
     }
-                                                                              
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:3',
             'file' => 'required|mimes:pdf,png,jpg,jpeg|max:5120',
+            'legislation_category_id' => 'required|exists:legislation_categories,id,status,1',
             'status' => 'required|in:0,1'
         ], [
-            'file.max' => 'The file must not be greater than 5120 kilobytes.'
+            'file.max' => 'The file must not be greater than 5120 kilobytes.',
+            'legislation_category_id.exists' => 'The selected legislation category is invalid or its status is not active.'
         ]);
 
         if($validator->fails()) {
@@ -184,9 +189,11 @@ class LegislationController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:3',
             'file' => 'nullable|mimes:pdf,png,jpg,jpeg|max:5120',
+            'legislation_category_id' => 'required|exists:legislation_categories,id,status,1',
             'status' => 'required|in:0,1'
         ], [
-            'file.max' => 'The file must not be greater than 5120 kilobytes.'
+            'file.max' => 'The file must not be greater than 5120 kilobytes.',
+            'legislation_category_id.exists' => 'The selected legislation category is invalid or its status is not active.'
         ]);
 
         if($validator->fails()) {

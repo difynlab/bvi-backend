@@ -37,6 +37,8 @@ return new class extends Migration
             $table->string('register_link');
             $table->string('thumbnail');
             $table->boolean('status')->default(1);
+
+            $table->foreignId('event_category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
