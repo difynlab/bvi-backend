@@ -8,6 +8,7 @@ use App\Http\Controllers\EventCategoryController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ImportantInfoController;
 use App\Http\Controllers\ExpertInfoController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\LegislationCategoryController;
 use App\Http\Controllers\LegislationController;
 // use App\Http\Controllers\LegislationFileController;
@@ -174,6 +175,13 @@ Route::middleware('auth:api')->group(function () {
                 Route::get('mark-seen', 'markSeen');
             });
         // Notification route
+
+        // Gallery routes
+            Route::controller(GalleryController::class)->prefix('galleries')->group(function() {
+                Route::get('/', 'index');
+                Route::get('{id}', 'show');
+            });
+        // Gallery routes
     };
 // Shared routes
 
@@ -317,6 +325,14 @@ Route::middleware('auth:api')->group(function () {
                 Route::post('{id}/update-membership/{payment_id}', 'updateMembership');
             });
         // Member routes
+
+        // Event category routes
+            Route::controller(GalleryController::class)->prefix('galleries')->group(function() {
+                Route::post('/', 'store');
+                Route::post('{id}', 'update');
+                Route::delete('{id}', 'destroy');
+            });
+        // Event category routes
     };
 // Admin routes
 

@@ -64,7 +64,6 @@ class EventController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:3',
-            'category' => 'required|in:workshop,webinar,conference',
             'short_description' => 'required|min:3',
             // 'date' => 'required|date|after_or_equal:today',
             'date' => 'required|date',
@@ -111,7 +110,6 @@ class EventController extends Controller
 
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:3',
-            'category' => 'required|in:workshop,webinar,conference',
             'short_description' => 'required|min:3',
             // 'date' => 'required|date|after_or_equal:today',
             'date' => 'required|date',

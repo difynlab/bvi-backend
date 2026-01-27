@@ -59,8 +59,10 @@ class MembershipPlanController extends Controller
             'eligibility_criteria' => 'required|min:3',
             'perks' => 'required|array',
             'perks.*' => 'required|min:3',
-            'pricing' => 'required|array',
-            'pricing.*' => 'required|numeric',
+            'durations' => 'required|array',
+            'durations.*' => 'required|string',
+            'prices' => 'required|array',
+            'prices.*' => 'required|numeric',
             'status' => 'required|in:0,1',
         ]);
 
@@ -68,9 +70,17 @@ class MembershipPlanController extends Controller
             return errorResponse('Validation failed', 400, $validator->errors());
         }
 
-        $data = $request->all();
+        $pricing = [];
+        foreach($request->durations as $key => $duration) {
+            $pricing [] = [
+                'duration' => $duration,
+                'price' => $request->prices[$key]
+            ];
+        }
+
+        $data = $request->except('durations', 'prices');
         $data['perks'] = json_encode($request->perks);
-        $data['pricing'] = json_encode($request->pricing);
+        $data['pricing'] = json_encode($pricing);
         $membership_plan = MembershipPlan::create($data);
 
         $this->processData($membership_plan);
@@ -92,8 +102,10 @@ class MembershipPlanController extends Controller
             'eligibility_criteria' => 'required|min:3',
             'perks' => 'required|array',
             'perks.*' => 'required|min:3',
-            'pricing' => 'required|array',
-            'pricing.*' => 'required|numeric',
+            'durations' => 'required|array',
+            'durations.*' => 'required|string',
+            'prices' => 'required|array',
+            'prices.*' => 'required|numeric',
             'status' => 'required|in:0,1',
         ]);
 
@@ -101,9 +113,17 @@ class MembershipPlanController extends Controller
             return errorResponse('Validation failed', 400, $validator->errors());
         }
 
-        $data = $request->all();
+        $pricing = [];
+        foreach($request->durations as $key => $duration) {
+            $pricing [] = [
+                'duration' => $duration,
+                'price' => $request->prices[$key]
+            ];
+        }
+
+        $data = $request->except('durations', 'prices');
         $data['perks'] = json_encode($request->perks);
-        $data['pricing'] = json_encode($request->pricing);
+        $data['pricing'] = json_encode($pricing);
         $membership_plan->fill($data)->save();
 
         $this->processData($membership_plan);

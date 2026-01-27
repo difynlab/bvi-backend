@@ -30,7 +30,6 @@ return new class extends Migration
                 'UTC+12:00',
             ]);
             $table->text('short_description');
-            $table->enum('category', ['workshop', 'conference', 'webinar']);
             $table->enum('repeat', ['na', 'daily', 'weekly', 'monthly', 'annually', 'custom']);
             $table->text('content');
             $table->string('location');
