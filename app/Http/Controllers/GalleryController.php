@@ -4,20 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Gallery;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class GalleryController extends Controller
 {
     private function processData($item)
     {
         if($item->type == 'image') {
-            $item->original_file = url('') . '/storage/galleries/' . $item->file;
-            $item->blurred_file = url('') . '/storage/galleries/thumbnails/' . $item->file;
-        }
-        else {
-            $item->file = url('') . '/storage/galleries/' . $item->file;
+            $item->original_image = url('') . '/storage/galleries/' . $item->image;
+            $item->blurred_image = url('') . '/storage/galleries/thumbnails/' . $item->image;
         }
 
         return $item;
@@ -62,10 +57,11 @@ class GalleryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'type' => 'required|in:image,video',
-            'file' => 'required|max:5120',
+            'image' => 'nullable|max:5120',
+            'url' => 'nullable|url',
             'status' => 'required|in:0,1',
         ], [
-            'file.max' => 'The file must not be greater than 5120 kilobytes.',
+            'image.max' => 'The image must not be greater than 5120 kilobytes.',
         ]);
 
         if($validator->fails()) {
@@ -73,16 +69,33 @@ class GalleryController extends Controller
         }
 
         if($request->type == 'image') {
-            $file = process_image($request->file('file'), 'galleries');
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|max:5120',
+            ], [
+                'image.max' => 'The image must not be greater than 5120 kilobytes.',
+            ]);
+
+            if($validator->fails()) {
+                return errorResponse('Validation failed', 400, $validator->errors());
+            }
+
+            $image = process_image($request->file('image'), 'galleries');
         }
         else {
-            $video = $request->file;
-            $file = Str::random(40) . '.' . $video->getClientOriginalExtension();
-            $video->storeAs('galleries', $file, 'public');
+            $validator = Validator::make($request->all(), [
+                'url' => 'required|url'
+            ]);
+
+            if($validator->fails()) {
+                return errorResponse('Validation failed', 400, $validator->errors());
+            }
+
+            $url = $request->url;
         }
 
         $data = $request->all();
-        $data['file'] = $file;
+        $data['image'] = $image ?? null;
+        $data['url'] = $url ?? null;
         $gallery = Gallery::create($data);
 
         $this->processData($gallery);
@@ -100,10 +113,11 @@ class GalleryController extends Controller
 
         $validator = Validator::make($request->all(), [
             'type' => 'required|in:image,video',
-            'file' => 'required|max:5120',
+            'image' => 'nullable|max:5120',
+            'url' => 'nullable|url',
             'status' => 'required|in:0,1',
         ], [
-            'file.max' => 'The file must not be greater than 5120 kilobytes.',
+            'image.max' => 'The image must not be greater than 5120 kilobytes.',
         ]);
 
         if($validator->fails()) {
@@ -111,18 +125,33 @@ class GalleryController extends Controller
         }
 
         if($request->type == 'image') {
-            $file = process_image($request->file('file'), 'galleries', $gallery->file);
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|max:5120',
+            ], [
+                'image.max' => 'The image must not be greater than 5120 kilobytes.',
+            ]);
+
+            if($validator->fails()) {
+                return errorResponse('Validation failed', 400, $validator->errors());
+            }
+
+            $image = process_image($request->file('image'), 'galleries', $gallery->image);
         }
         else {
-            Storage::delete("galleries/$gallery->file");
-            
-            $video = $request->file;
-            $file = Str::random(40) . '.' . $video->getClientOriginalExtension();
-            $video->storeAs('galleries', $file, 'public');
+            $validator = Validator::make($request->all(), [
+                'url' => 'required|url'
+            ]);
+
+            if($validator->fails()) {
+                return errorResponse('Validation failed', 400, $validator->errors());
+            }
+
+            $url = $request->url;
         }
 
         $data = $request->all();
-        $data['file'] = $file;
+        $data['image'] = $image ?? null;
+        $data['url'] = $url ?? null;
         $gallery->fill($data)->save();
 
         $this->processData($gallery);
