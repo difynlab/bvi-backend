@@ -17,7 +17,8 @@ return new class extends Migration
             // $table->text('files')->nullable();
             // $table->string('links')->nullable();
             $table->text('title');
-            $table->string('file');
+            $table->string('file')->nullable();
+            $table->string('link')->nullable();
             $table->boolean('status')->default(1);
 
             $table->foreignId('legislation_category_id')->constrained()->onDelete('cascade');
