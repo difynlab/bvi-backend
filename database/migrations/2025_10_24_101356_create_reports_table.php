@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('file');
-            $table->string('link');
+            $table->string('file')->nullable();
+            $table->string('link')->nullable();
             $table->date('publish_date');
             $table->boolean('status')->default(1);
 

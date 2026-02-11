@@ -61,13 +61,13 @@ class ReportController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
-            'file' => 'required|mimes:pdf|max:15360',
-            'link' => 'required|min:3',
+            'file' => 'nullable|mimes:pdf|max:10240',
+            'link' => 'nullable|url',
             'publish_date' => 'required|date',
             'report_category_id' => 'required|exists:report_categories,id,status,1',
             'status' => 'required|in:0,1'
         ], [
-            'file.max' => 'The file must not be greater than 15360 kilobytes.',
+            'file.max' => 'The file must not be greater than 10240 kilobytes.',
             'report_category_id.exists' => 'The selected report category is invalid or its status is not active.'
         ]);
 
@@ -98,13 +98,13 @@ class ReportController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
-            'file' => 'nullable|mimes:pdf|max:15360',
-            'link' => 'required|min:3',
+            'file' => 'nullable|mimes:pdf|max:10240',
+            'link' => 'nullable|url',
             'publish_date' => 'required|date',
             'report_category_id' => 'required|exists:report_categories,id,status,1',
             'status' => 'required|in:0,1'
         ], [
-            'file.max' => 'The file must not be greater than 15360 kilobytes.',
+            'file.max' => 'The file must not be greater than 10240 kilobytes.',
             'report_category_id.exists' => 'The selected report category is invalid or its status is not active.'
         ]);
 

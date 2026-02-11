@@ -67,13 +67,13 @@ class NewsletterController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'description' => 'required|min:3',
-            'file' => 'nullable|mimes:pdf|max:15360',
+            'file' => 'nullable|mimes:pdf|max:10240',
             'link' => 'nullable|min:3',
             'publish_date' => 'required',
             'newsletter_category_id' => 'required|exists:newsletter_categories,id,status,1',
             'status' => 'required|in:0,1'
         ], [
-            'file.max' => 'The file must not be greater than 15360 kilobytes.',
+            'file.max' => 'The file must not be greater than 10240 kilobytes.',
             'newsletter_category_id.exists' => 'The selected newsletter category is invalid or its status is not active.'
         ]);
 
@@ -108,13 +108,13 @@ class NewsletterController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
             'description' => 'required|min:3',
-            'file' => 'nullable|mimes:pdf|max:15360',
+            'file' => 'nullable|mimes:pdf|max:10240',
             'link' => 'nullable|min:3',
             'publish_date' => 'required',
             'newsletter_category_id' => 'required|exists:newsletter_categories,id,status,1',
             'status' => 'required|in:0,1'
         ], [
-            'file.max' => 'The file must not be greater than 15360 kilobytes.',
+            'file.max' => 'The file must not be greater than 10240 kilobytes.',
             'newsletter_category_id.exists' => 'The selected newsletter category is invalid or its status is not active.'
         ]);
 
