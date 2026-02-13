@@ -75,9 +75,11 @@ class ReportController extends Controller
             return errorResponse('Validation failed', 400, $validator->errors());
         }
 
-        $file = $request->file('file');
-        $file_name = Str::uuid()->toString().'.pdf';
-        Storage::put("reports/$file_name", file_get_contents($file));
+        if($request->file('file')) {
+            $file = $request->file('file');
+            $file_name = Str::uuid()->toString().'.pdf';
+            Storage::put("reports/$file_name", file_get_contents($file));
+        }
 
         $data = $request->all();
         $data['file'] = $file_name;
