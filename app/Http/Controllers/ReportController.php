@@ -82,7 +82,7 @@ class ReportController extends Controller
         }
 
         $data = $request->all();
-        $data['file'] = $file_name;
+        $data['file'] = $file_name ?? null;
         $report = Report::create($data);
 
         $this->processData($report);
