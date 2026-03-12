@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\CommunicationPlaybookController;
 use App\Http\Controllers\EventCategoryController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ImportantInfoController;
@@ -172,6 +173,12 @@ Route::middleware('auth:api')->group(function () {
                 Route::get('{id}', 'show');
             });
         // Gallery routes
+
+        // Communication playbook routes
+            Route::controller(CommunicationPlaybookController::class)->prefix('communication-playbook')->group(function() {
+                Route::get('/', 'index');
+            });
+        // Communication playbook routes
     };
 // Shared routes
 
@@ -313,6 +320,12 @@ Route::middleware('auth:api')->group(function () {
                 Route::delete('{id}', 'destroy');
             });
         // Event category routes
+
+        // Communication playbook routes
+            Route::controller(CommunicationPlaybookController::class)->prefix('communication-playbook')->group(function() {
+                Route::post('/', 'update');
+            });
+        // Communication playbook routes
     };
 // Admin routes
 
