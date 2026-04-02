@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('file')->nullable();
             $table->string('link')->nullable();
+            $table->string('preview_img')->nullable();
             $table->date('publish_date');
             $table->boolean('status')->default(1);
 

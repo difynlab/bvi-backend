@@ -19,6 +19,11 @@ class ReportController extends Controller
             $item->file = url('') . '/storage/reports/' . $item->file;
         }
 
+        if($item->preview_img) {
+            $item->original_preview_img = url('') . '/storage/reports/' . $item->preview_img;
+            $item->blurred_preview_img = url('') . '/storage/reports/thumbnails/' . $item->preview_img;
+        }
+
         return $item;
     }
 
@@ -63,11 +68,13 @@ class ReportController extends Controller
             'name' => 'required|min:3',
             'file' => 'nullable|mimes:pdf|max:10240',
             'link' => 'nullable|url',
+            'preview_img' => 'nullable|max:5120',
             'publish_date' => 'required|date',
             'report_category_id' => 'required|exists:report_categories,id,status,1',
             'status' => 'required|in:0,1'
         ], [
             'file.max' => 'The file must not be greater than 10240 kilobytes.',
+            'preview_img.max' => 'The preview image must not be greater than 5120 kilobytes.',
             'report_category_id.exists' => 'The selected report category is invalid or its status is not active.'
         ]);
 
@@ -81,8 +88,11 @@ class ReportController extends Controller
             Storage::put("reports/$file_name", file_get_contents($file));
         }
 
+        $processed_preview_img = process_image($request->file('preview_img'), 'reports');
+
         $data = $request->all();
         $data['file'] = $file_name ?? null;
+        $data['preview_img'] = $processed_preview_img;
         $report = Report::create($data);
 
         $this->processData($report);
@@ -102,11 +112,13 @@ class ReportController extends Controller
             'name' => 'required|min:3',
             'file' => 'nullable|mimes:pdf|max:10240',
             'link' => 'nullable|url',
+            'preview_img' => 'nullable|max:5120',
             'publish_date' => 'required|date',
             'report_category_id' => 'required|exists:report_categories,id,status,1',
             'status' => 'required|in:0,1'
         ], [
             'file.max' => 'The file must not be greater than 10240 kilobytes.',
+            'preview_img.max' => 'The preview image must not be greater than 5120 kilobytes.',
             'report_category_id.exists' => 'The selected report category is invalid or its status is not active.'
         ]);
 
@@ -125,8 +137,16 @@ class ReportController extends Controller
             $file_name = $report->file;
         }
 
+        if($request->file('preview_img')) {
+            $processed_preview_img = process_image($request->file('preview_img'), 'reports', $report->preview_img);
+        }
+        else {
+            $processed_preview_img = $report->preview_img;
+        }
+
         $data = $request->all();
         $data['file'] = $file_name;
+        $data['preview_img'] = $processed_preview_img;
         $report->fill($data)->save();
 
         $this->processData($report);
